@@ -7,19 +7,26 @@
 namespace shrew {
 namespace random_variable {
 
-class NormalDistribution : ProbabilityDistribution<double> {
+class NormalDistribution : ProbabilityDistribution {
  public:
   // Probability density function
-  virtual double Pdf(std::vector<double> x) override;
+  virtual double Pdf(double x) override;
 
   // Cumulative distribution function
-  virtual double Cdf(std::vector<double> x) override;
+  virtual double Cdf(double x) override;
 
   // Moment generating function
-  virtual double Mgf(std::vector<double> x) override;
+  virtual double Mgf(double x) override;
 
   // Characteristic function
-  virtual double Cf(std::vector<double> x) override;  
+  virtual double Cf(double x) override;  
+
+  double mu;
+  double sigma;
+
+  NormalDistribution(double mu, double sigma) : mu(mu), sigma(sigma) {};
+  NormalDistribution() {};
+
 };
 
 }  // namespace random_variable

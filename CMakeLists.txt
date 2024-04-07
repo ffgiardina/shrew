@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.10)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+project(shrew)
+add_executable(shrew src/test.cpp src/normal_distribution.cpp src/random_variable.cpp)

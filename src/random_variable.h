@@ -1,35 +1,46 @@
 #pragma once
 
-#include <vector>
-
 namespace shrew {
 namespace random_variable {
 
-template<typename T>
 class ProbabilityDistribution {
  public:
   // Probability density function
-  virtual double Pdf(std::vector<T> x) = 0;
+  virtual double Pdf(double x) = 0;
 
   // Cumulative distribution function
-  virtual double Cdf(std::vector<T> x) = 0;
+  virtual double Cdf(double x) = 0;
 
   // Moment generating function
-  virtual double Mgf(std::vector<T> x) = 0;
+  virtual double Mgf(double x) = 0;
 
   // Characteristic function
-  virtual double Cf(std::vector<T> x) = 0;  
+  virtual double Cf(double x) = 0;  
 };
 
 template<typename T>
-class RandomVariable : ProbabilityDistribution<T> {
+class RandomVariable {
  public:
+  T probability_distribution;
   void Add();
   void Subtract();
-  void Multiply();
-  void Divide();
-  void Power();
-  void Logarithm();
+  double Evaluate(double x) {
+    return probability_distribution.Pdf(x);
+  };
+  RandomVariable(T pdist) {
+    probability_distribution = pdist;
+  };
+};
+
+template<typename T, int n>
+class RandomVector {
+ public:
+  RandomVariable<T> vector;
+  void Add();
+  void Subtract();
+  
+  RandomVector() {
+  };
 };
 
 }  // namespace random_variable

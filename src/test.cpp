@@ -7,8 +7,15 @@ using namespace shrew::random_variable;
 
 int main()
 {
-    NormalDistribution grv = NormalDistribution();
-    std::vector<double> vect(0, 1);
-    std::cout << grv.Pdf(vect);
+    NormalDistribution normal = NormalDistribution(0, 1);
+    // std::cout << normal.mu << normal.sigma << std::endl;
+    RandomVariable<NormalDistribution> grv = RandomVariable<NormalDistribution>(normal);
+    
+    int n {10};
+    double y[n];
+    for (int i {0}; i<n; ++i) {
+        y[i] = grv.Evaluate(i);
+        std::cout << y[i] << " ";
+    }
     return 0;
 };
