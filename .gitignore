@@ -10,6 +10,8 @@
 .DS_Store
 
 # CMake
+_deps
+build
 CMakeFiles
 Makefile
 cmake_install.cmake
