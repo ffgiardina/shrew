@@ -8,6 +8,7 @@
 # Other
 .dsym
 .DS_Store
+.vscode
 
 # CMake
 _deps

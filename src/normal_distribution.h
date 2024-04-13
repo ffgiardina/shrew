@@ -1,8 +1,7 @@
 #pragma once
 
-#include <vector>
-
 #include "random_variable.h"
+#include <complex>
 
 namespace shrew {
 namespace random_variable {
@@ -19,7 +18,7 @@ class NormalDistribution : ProbabilityDistribution {
   virtual double Mgf(double x) override;
 
   // Characteristic function
-  virtual double Cf(double x) override;  
+  virtual std::complex<double> Cf(double x) override;  
 
   double mu;
   double sigma;

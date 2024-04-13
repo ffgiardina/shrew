@@ -1,5 +1,7 @@
 #include <math.h>
 #include "normal_distribution.h"
+#include <cmath>
+#include <complex>
 
 namespace shrew {
 namespace random_variable {
@@ -11,17 +13,19 @@ double NormalDistribution::Pdf(double x)
 
 double NormalDistribution::Cdf(double x) 
 {
-    return x;
+    return 1.0 / 2.0 * (1 + erf((x - mu) / (sigma * sqrt(2))));
 };
 
-double NormalDistribution::Mgf(double x) 
+double NormalDistribution::Mgf(double t) 
 {
-    return x;
+    return exp(mu * t + pow(sigma, 2) * pow(t, 2) / 2);
 };
 
-double NormalDistribution::Cf(double x) 
+std::complex<double> NormalDistribution::Cf(double t) 
 {
-    return x;
+    std::complex<double> c(exp(-1.0/2.0 * pow(sigma * t, 2)) * cos(mu * t), 
+        exp(-1.0/2.0 * pow(sigma * t, 2)) * sin(mu * t));
+    return c;
 };
 
 }  // namespace random_variable

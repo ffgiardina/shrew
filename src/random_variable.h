@@ -1,5 +1,7 @@
 #pragma once
 
+#include <complex>
+
 namespace shrew {
 namespace random_variable {
 
@@ -12,10 +14,10 @@ class ProbabilityDistribution {
   virtual double Cdf(double x) = 0;
 
   // Moment generating function
-  virtual double Mgf(double x) = 0;
+  virtual double Mgf(double t) = 0;
 
   // Characteristic function
-  virtual double Cf(double x) = 0;  
+  virtual std::complex<double> Cf(double t) = 0;  
 };
 
 template<typename T>
