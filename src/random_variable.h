@@ -30,6 +30,7 @@ class RandomVariable {
     probability_distribution = pdist;
   };
   RandomVariable<T> operator+(RandomVariable<T> const &var);
+  RandomVariable<T> operator-(RandomVariable<T> const &var);
 };
 
 template<typename T, int n>
