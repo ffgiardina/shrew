@@ -28,5 +28,13 @@ std::complex<double> NormalDistribution::Cf(double t)
     return c;
 };
 
+template<>
+RandomVariable<NormalDistribution> RandomVariable<NormalDistribution>::operator+(RandomVariable<NormalDistribution> const &var) 
+{
+    double mu = probability_distribution.mu + var.probability_distribution.mu;
+    double sigma = pow(probability_distribution.sigma, 2) + pow(var.probability_distribution.sigma, 2);
+    return RandomVariable<NormalDistribution>(NormalDistribution(mu, sigma));
+};
+
 }  // namespace random_variable
 }  // namespace shrew

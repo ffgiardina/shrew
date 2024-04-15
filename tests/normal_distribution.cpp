@@ -10,7 +10,7 @@ class NormalDistributionTestFixture : public testing::Test {
 };
 
 TEST_F(NormalDistributionTestFixture, ProbabilityDensityFunction) {
-  ASSERT_NEAR(grv.Evaluate(0), 0.3989422804014337, 1e-15);
+  ASSERT_NEAR(grv.probability_distribution.Pdf(0), 0.3989422804014337, 1e-15);
 }
 
 TEST_F(NormalDistributionTestFixture, CumulativeDistributionFunction) {
@@ -25,4 +25,11 @@ TEST_F(NormalDistributionTestFixture, CharacteristicFunction) {
   std::complex<double> c_ref(0.60653065971263342, 0);
   double diff = abs(grv.probability_distribution.Cf(1.0) - c_ref);
   ASSERT_NEAR(diff, 0, 1e-15);
+}
+
+TEST_F(NormalDistributionTestFixture, Addition) {
+  RandomVariable<NormalDistribution> grv_a = RandomVariable<NormalDistribution>(NormalDistribution(3.0, 1.0));
+  ASSERT_NEAR((grv + grv).probability_distribution.Pdf(0), 0.5*0.3989422804014337, 1e-15);
+  ASSERT_NEAR((grv_a + grv).probability_distribution.Pdf(0), 0.06475879783294586, 1e-15);
+  ASSERT_NEAR((grv + grv_a).probability_distribution.Pdf(0), 0.06475879783294586, 1e-15);
 }
