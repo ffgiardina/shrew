@@ -28,5 +28,18 @@ class NormalDistribution : ProbabilityDistribution {
 
 };
 
+RandomVariable<NormalDistribution> operator+(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
+RandomVariable<NormalDistribution> operator-(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
+
+RandomVariable<NormalDistribution> operator+(double var_a, RandomVariable<NormalDistribution> const &var_b);
+RandomVariable<NormalDistribution> operator+(RandomVariable<NormalDistribution> const &var_a, double var_b);
+RandomVariable<NormalDistribution> operator-(double var_a, RandomVariable<NormalDistribution> const &var_b);
+RandomVariable<NormalDistribution> operator-(RandomVariable<NormalDistribution> const &var_a, double var_b);
+RandomVariable<NormalDistribution> operator*(double var_a, RandomVariable<NormalDistribution> const &var_b);
+RandomVariable<NormalDistribution> operator*(RandomVariable<NormalDistribution> const &var_a, double var_b);
+RandomVariable<NormalDistribution> operator/(double var_a, RandomVariable<NormalDistribution> const &var_b);
+RandomVariable<NormalDistribution> operator/(RandomVariable<NormalDistribution> const &var_a, double var_b);
+
+
 }  // namespace random_variable
 }  // namespace shrew

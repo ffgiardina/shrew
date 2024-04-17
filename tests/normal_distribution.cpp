@@ -28,16 +28,35 @@ TEST_F(NormalDistributionTestFixture, CharacteristicFunction) {
 }
 
 TEST_F(NormalDistributionTestFixture, RandomVariableAddition) {
-  RandomVariable<NormalDistribution> grv_a = RandomVariable<NormalDistribution>(NormalDistribution(3.0, 1.0));
+  auto grv_a = RandomVariable<NormalDistribution>(NormalDistribution(3.0, 1.0));
   ASSERT_NEAR((grv + grv).probability_distribution.Pdf(0), 0.5*0.3989422804014337, 1e-15);
   ASSERT_NEAR((grv_a + grv).probability_distribution.Pdf(0), 0.06475879783294586, 1e-15);
   ASSERT_NEAR((grv + grv_a).probability_distribution.Pdf(0), 0.06475879783294586, 1e-15);
 }
 
 TEST_F(NormalDistributionTestFixture, RandomVariableSubtraction) {
-  RandomVariable<NormalDistribution> grv_a = RandomVariable<NormalDistribution>(NormalDistribution(3.0, 1.0));
-
+  auto grv_a = RandomVariable<NormalDistribution>(NormalDistribution(3.0, 1.0));
   ASSERT_NEAR((grv - grv).probability_distribution.Pdf(0), 0.5*0.3989422804014337, 1e-15);
   ASSERT_NEAR((grv_a - grv).probability_distribution.Pdf(3.0), 0.5*0.3989422804014337, 1e-15);
   ASSERT_NEAR((grv - grv_a).probability_distribution.Pdf(-3.0), 0.5*0.3989422804014337, 1e-15);
+}
+
+TEST_F(NormalDistributionTestFixture, ConstantAddition) {
+  ASSERT_NEAR((grv + 2).probability_distribution.Pdf(2.0), 0.3989422804014337, 1e-15);
+  ASSERT_NEAR((2 + grv).probability_distribution.Pdf(2.0), 0.3989422804014337, 1e-15);
+}
+
+TEST_F(NormalDistributionTestFixture, ConstantSubtraction) {
+  ASSERT_NEAR((grv - 2).probability_distribution.Pdf(-2.0), 0.3989422804014337, 1e-15);
+  ASSERT_NEAR((2 - grv).probability_distribution.Pdf(2.0), 0.3989422804014337, 1e-15);
+}
+
+TEST_F(NormalDistributionTestFixture, ConstantMultiplication) {
+  ASSERT_NEAR((grv * 2).probability_distribution.Pdf(0.0), 0.3989422804014337 / 2.0, 1e-15);
+  ASSERT_NEAR((2 * grv).probability_distribution.Pdf(0.0), 0.3989422804014337 / 2.0, 1e-15);
+}
+
+TEST_F(NormalDistributionTestFixture, ConstantDivision) {
+  ASSERT_NEAR((grv / 2).probability_distribution.Pdf(0.0), 0.3989422804014337 * 2.0, 1e-14);
+  EXPECT_THROW((2 / grv).probability_distribution.Pdf(0.0), std::logic_error);
 }

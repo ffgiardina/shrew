@@ -28,21 +28,62 @@ std::complex<double> NormalDistribution::Cf(double t)
     return c;
 };
 
-template<>
-RandomVariable<NormalDistribution> RandomVariable<NormalDistribution>::operator+(RandomVariable<NormalDistribution> const &var) 
+RandomVariable<NormalDistribution> operator+(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b)
 {
-    double mu = probability_distribution.mu + var.probability_distribution.mu;
-    double sigma = pow(probability_distribution.sigma, 2) + pow(var.probability_distribution.sigma, 2);
+    double mu = var_a.probability_distribution.mu - var_b.probability_distribution.mu;
+    double sigma = pow(var_a.probability_distribution.sigma, 2) + pow(var_b.probability_distribution.sigma, 2);
     return RandomVariable<NormalDistribution>(NormalDistribution(mu, sigma));
 };
 
-template<>
-RandomVariable<NormalDistribution> RandomVariable<NormalDistribution>::operator-(RandomVariable<NormalDistribution> const &var) 
+RandomVariable<NormalDistribution> operator-(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b)
 {
-    double mu = probability_distribution.mu - var.probability_distribution.mu;
-    double sigma = pow(probability_distribution.sigma, 2) + pow(var.probability_distribution.sigma, 2);
+    double mu = var_a.probability_distribution.mu - var_b.probability_distribution.mu;
+    double sigma = pow(var_a.probability_distribution.sigma, 2) + pow(var_b.probability_distribution.sigma, 2);
     return RandomVariable<NormalDistribution>(NormalDistribution(mu, sigma));
 };
 
+RandomVariable<NormalDistribution> operator+(double var_a, RandomVariable<NormalDistribution> const &var_b)
+{
+    return RandomVariable<NormalDistribution>(NormalDistribution(var_a + var_b.probability_distribution.mu, var_b.probability_distribution.sigma));
+};
+
+RandomVariable<NormalDistribution> operator+(RandomVariable<NormalDistribution> const &var_a, double var_b)
+{
+    return RandomVariable<NormalDistribution>(NormalDistribution(var_b + var_a.probability_distribution.mu, var_a.probability_distribution.sigma));
+};
+RandomVariable<NormalDistribution> operator-(double var_a, RandomVariable<NormalDistribution> const &var_b)
+{
+    return RandomVariable<NormalDistribution>(NormalDistribution(var_a - var_b.probability_distribution.mu, var_b.probability_distribution.sigma));
+};
+RandomVariable<NormalDistribution> operator-(RandomVariable<NormalDistribution> const &var_a, double var_b)
+{
+    return RandomVariable<NormalDistribution>(NormalDistribution(var_a.probability_distribution.mu - var_b, var_a.probability_distribution.sigma));
+};
+
+RandomVariable<NormalDistribution> operator*(double var_a, RandomVariable<NormalDistribution> const &var_b)
+{
+    double mu = var_a * var_b.probability_distribution.mu;
+    double sigma = var_a * var_b.probability_distribution.sigma;
+    return RandomVariable<NormalDistribution>(NormalDistribution(mu, sigma));
+};
+
+RandomVariable<NormalDistribution> operator*(RandomVariable<NormalDistribution> const &var_a, double var_b)
+{
+    double mu = var_a.probability_distribution.mu * var_b;
+    double sigma = var_a.probability_distribution.sigma * var_b;
+    return RandomVariable<NormalDistribution>(NormalDistribution(mu, sigma));
+};
+
+RandomVariable<NormalDistribution> operator/(double var_a, RandomVariable<NormalDistribution> const &var_b)
+{
+    throw std::logic_error( "Division by normal random variables is currently not supported" );
+};
+
+RandomVariable<NormalDistribution> operator/(RandomVariable<NormalDistribution> const &var_a, double var_b)
+{
+    double mu = var_a.probability_distribution.mu / var_b;
+    double sigma = var_a.probability_distribution.sigma / var_b;
+    return RandomVariable<NormalDistribution>(NormalDistribution(mu, sigma));
+};
 }  // namespace random_variable
 }  // namespace shrew
