@@ -15,7 +15,14 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # Create library
-add_library(shrew STATIC src/normal_distribution.cpp src/random_variable.cpp)
+add_library(${PROJECT_NAME} STATIC src/normal_distribution.cpp src/random_variable.cpp)
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+)
 
 # Test
 enable_testing()
