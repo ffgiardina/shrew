@@ -14,13 +14,17 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+# Create library
+add_library(shrew STATIC src/normal_distribution.cpp src/random_variable.cpp)
+
 # Test
 enable_testing()
 
-add_executable(shrew_tests src/normal_distribution.cpp src/random_variable.cpp tests/normal_distribution.cpp)
+add_executable(shrew_tests tests/normal_distribution.cpp)
 target_link_libraries(
   shrew_tests
   GTest::gtest_main
+  shrew
 )
 
 include(GoogleTest)
