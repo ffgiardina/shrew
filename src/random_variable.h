@@ -5,6 +5,7 @@
 namespace shrew {
 namespace random_variable {
 
+/// @brief Abstract base class of a probability distribution
 class ProbabilityDistribution {
  public:
   // Probability density function
@@ -20,6 +21,8 @@ class ProbabilityDistribution {
   virtual std::complex<double> Cf(double t) = 0;  
 };
 
+/// @brief Base class of a random variable
+/// @tparam T 
 template<typename T>
 class RandomVariable {
  public:
@@ -29,6 +32,9 @@ class RandomVariable {
   };
 };
 
+/// @brief Base class of a random vector
+/// @tparam T 
+/// @tparam n 
 template<typename T, int n>
 class RandomVector {
  public:

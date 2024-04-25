@@ -6,6 +6,7 @@
 namespace shrew {
 namespace random_variable {
 
+/// @brief Normal (or Gaussian) probability distribution 
 class NormalDistribution : ProbabilityDistribution {
  public:
   // Probability density function
