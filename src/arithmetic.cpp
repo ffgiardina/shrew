@@ -19,6 +19,11 @@ double evaluate_pdf(double x, Operation operation, std::function<double(double)>
         return 1/abs(y) * l_eval(y) * r_eval(x / y);
     };
 
+    auto division_integrand = [x, l_eval, r_eval](double y)
+    {
+        return abs(y) * l_eval(y) * r_eval(x * y);
+    };
+
     switch (operation) 
     {
         case addition:
@@ -28,7 +33,7 @@ double evaluate_pdf(double x, Operation operation, std::function<double(double)>
         case multiplication:
             return integrator.Integrate(multiplication_integrand);
         case division:
-            return 1.0;
+            return integrator.Integrate(division_integrand);
         case exponentiation:
             return 1.0;
     }

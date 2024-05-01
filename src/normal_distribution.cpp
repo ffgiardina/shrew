@@ -92,5 +92,10 @@ RandomVariable<GenericDistribution> operator*(RandomVariable<NormalDistribution>
     return GenericDistribution(std::make_shared<NormalDistribution>(var_a.probability_distribution), std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::multiplication);
 };
 
+RandomVariable<GenericDistribution> operator/(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b)
+{
+    return GenericDistribution(std::make_shared<NormalDistribution>(var_a.probability_distribution), std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::division);
+};
+
 }  // namespace random_variable
 }  // namespace shrew

@@ -15,12 +15,17 @@ TEST_F(GenericDistributionTestFixture, IntegrationVerification) {
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(0, 1.0));
 
   double res = integrator.Integrate([&normal_a](double x){return normal_a.probability_distribution.Pdf(x);});
-  ASSERT_NEAR(1.0, 1.0, 1e-15);
+  ASSERT_NEAR(res, 1.0, 1e-15);
 }
 
 TEST_F(GenericDistributionTestFixture, MultiplicationOfTwoNormalRandomVariables) {
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(-1.0, 1.0));
   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(1.0, 1.0));
-  double res = (normal_a * normal_b).probability_distribution.Pdf(1.0);
   ASSERT_NEAR((normal_a * normal_b).probability_distribution.Pdf(1.0), 0.0759651, 1e-8);
+}
+
+TEST_F(GenericDistributionTestFixture, DivisionOfTwoNormalRandomVariablesResultsInCauchyDistribution) {
+  RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
+  RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
+  ASSERT_NEAR((normal_a / normal_b).probability_distribution.Pdf(0.0), 0.318309886183790, 1e-15);
 }
