@@ -28,5 +28,15 @@ std::complex<double> GenericDistribution::Cf(double t)
     return c;
 };
 
+RandomVariable<GenericDistribution> operator+(RandomVariable<GenericDistribution> const &var_a, RandomVariable<GenericDistribution> const &var_b)
+{
+    return GenericDistribution(std::make_shared<GenericDistribution>(var_a.probability_distribution), std::make_shared<GenericDistribution>(var_b.probability_distribution), arithmetic::addition);
+};
+RandomVariable<GenericDistribution> operator-(RandomVariable<GenericDistribution> const &var_a, RandomVariable<GenericDistribution> const &var_b)
+{
+    return GenericDistribution(std::make_shared<GenericDistribution>(var_a.probability_distribution), std::make_shared<GenericDistribution>(var_b.probability_distribution), arithmetic::subtraction);
+};
+
+
 }  // namespace random_variable
 }  // namespace shrew

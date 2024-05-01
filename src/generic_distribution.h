@@ -32,5 +32,8 @@ class GenericDistribution : public ProbabilityDistribution {
 
 };
 
+RandomVariable<GenericDistribution> operator+(RandomVariable<GenericDistribution> const &var_a, RandomVariable<GenericDistribution> const &var_b);
+RandomVariable<GenericDistribution> operator-(RandomVariable<GenericDistribution> const &var_a, RandomVariable<GenericDistribution> const &var_b);
+
 }  // namespace random_variable
 }  // namespace shrew

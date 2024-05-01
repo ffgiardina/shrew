@@ -31,15 +31,15 @@ std::complex<double> NormalDistribution::Cf(double t)
 
 RandomVariable<NormalDistribution> operator+(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b)
 {
-    double mu = var_a.probability_distribution.mu - var_b.probability_distribution.mu;
-    double sigma = pow(var_a.probability_distribution.sigma, 2) + pow(var_b.probability_distribution.sigma, 2);
+    double mu = var_a.probability_distribution.mu + var_b.probability_distribution.mu;
+    double sigma = sqrt(pow(var_a.probability_distribution.sigma, 2) + pow(var_b.probability_distribution.sigma, 2));
     return RandomVariable<NormalDistribution>(NormalDistribution(mu, sigma));
 };
 
 RandomVariable<NormalDistribution> operator-(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b)
 {
     double mu = var_a.probability_distribution.mu - var_b.probability_distribution.mu;
-    double sigma = pow(var_a.probability_distribution.sigma, 2) + pow(var_b.probability_distribution.sigma, 2);
+    double sigma = sqrt(pow(var_a.probability_distribution.sigma, 2) + pow(var_b.probability_distribution.sigma, 2));
     return RandomVariable<NormalDistribution>(NormalDistribution(mu, sigma));
 };
 

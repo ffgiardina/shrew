@@ -24,6 +24,8 @@ class InfiniteDomainGaussKronrod : public Integrator
   public:
    virtual std::function<double(double)> MapDomain(std::function<double(double)> map) override;
    virtual double Integrate(std::function<double(double)> feval) override;
+   
+   static const unsigned int n_point = 200;
 };
   
 }  // namespace numerical_methods

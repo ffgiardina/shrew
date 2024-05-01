@@ -29,3 +29,29 @@ TEST_F(GenericDistributionTestFixture, DivisionOfTwoNormalRandomVariablesResults
   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
   ASSERT_NEAR((normal_a / normal_b).probability_distribution.Pdf(0.0), 0.318309886183790, 1e-15);
 }
+
+TEST_F(GenericDistributionTestFixture, AdditionOfTwoNormalRandomVariablesAsGenerics) {
+  RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(1.0, sqrt(2.0)));
+  RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(-1.0, sqrt(2.0)));
+
+  GenericDistribution g_dist_a = GenericDistribution(std::make_shared<NormalDistribution>(NormalDistribution(1.0, 1.0)), std::make_shared<NormalDistribution>(NormalDistribution(0.0, 1.0)), arithmetic::Operation::addition);
+  GenericDistribution g_dist_b = GenericDistribution(std::make_shared<NormalDistribution>(NormalDistribution(-1.0, 1.0)), std::make_shared<NormalDistribution>(NormalDistribution(0.0, 1.0)), arithmetic::Operation::addition);
+  RandomVariable<GenericDistribution> gen_a = RandomVariable<GenericDistribution>(g_dist_a);
+  RandomVariable<GenericDistribution> gen_b = RandomVariable<GenericDistribution>(g_dist_b);
+
+  ASSERT_NEAR((gen_a + gen_b).probability_distribution.Pdf(0.0), (normal_a + normal_b).probability_distribution.Pdf(0.0), 1e-15);
+}
+
+TEST_F(GenericDistributionTestFixture, SubtractionOfTwoNormalRandomVariablesAsGenerics) {
+  RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(1.0, sqrt(2.0)));
+  RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(-1.0, sqrt(2.0)));
+
+  GenericDistribution g_dist_a = GenericDistribution(std::make_shared<NormalDistribution>(NormalDistribution(1.0, 1.0)), std::make_shared<NormalDistribution>(NormalDistribution(0.0, 1.0)), arithmetic::Operation::addition);
+  GenericDistribution g_dist_b = GenericDistribution(std::make_shared<NormalDistribution>(NormalDistribution(-1.0, 1.0)), std::make_shared<NormalDistribution>(NormalDistribution(0.0, 1.0)), arithmetic::Operation::addition);
+  RandomVariable<GenericDistribution> gen_a = RandomVariable<GenericDistribution>(g_dist_a);
+  RandomVariable<GenericDistribution> gen_b = RandomVariable<GenericDistribution>(g_dist_b);
+
+  ASSERT_NEAR((gen_a - gen_b).probability_distribution.Pdf(0.0), (normal_a - normal_b).probability_distribution.Pdf(0.0), 1e-15);
+  ASSERT_NEAR((gen_b - gen_a).probability_distribution.Pdf(0.0), (normal_b - normal_a).probability_distribution.Pdf(0.0), 1e-15);
+
+}

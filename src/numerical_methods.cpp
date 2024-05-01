@@ -15,7 +15,7 @@ std::function<double(double)> InfiniteDomainGaussKronrod::MapDomain(std::functio
 double InfiniteDomainGaussKronrod::Integrate(std::function<double(double)> feval)
 {
     double  error;
-    return boost::math::quadrature::gauss_kronrod<double, 200>::integrate(this->MapDomain(feval), 0.0, 1.0, 0, 0, &error);
+    return boost::math::quadrature::gauss_kronrod<double, n_point>::integrate(this->MapDomain(feval), 0.0, 1.0, 0, 0, &error);
 };
 
 }  // namespace numerical_methods
