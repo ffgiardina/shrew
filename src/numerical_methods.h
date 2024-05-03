@@ -27,6 +27,17 @@ class InfiniteDomainGaussKronrod : public Integrator
    
    static const unsigned int n_point = 200;
 };
+
+class SemiInfiniteGaussKronrod : public Integrator
+{
+  public:
+   virtual std::function<double(double)> MapDomain(std::function<double(double)> map) override;
+   virtual double Integrate(std::function<double(double)> feval) override;
+   
+   double upper_bound;
+   static const unsigned int n_point = 200;
+   SemiInfiniteGaussKronrod(double upper_bound): upper_bound(upper_bound) {};
+};
   
 }  // namespace numerical_methods
 }  // namespace shrew

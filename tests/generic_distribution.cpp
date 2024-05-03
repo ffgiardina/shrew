@@ -66,10 +66,19 @@ TEST_F(GenericDistributionTestFixture, SubtractionOfTwoNormalRandomVariablesAsGe
   ASSERT_NEAR((gen_b - gen_a).probability_distribution.Pdf(0.0), (normal_b - normal_a).probability_distribution.Pdf(0.0), 1e-15);
 }
 
-// TEST_F(GenericDistributionTestFixture, ExponentiationOfTwoNormalRandomVariables) {
-//   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
-//   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
+TEST_F(GenericDistributionTestFixture, ExponentiationOfTwoNormalRandomVariables) {
+  RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
+  RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
   
-//   double res = (normal_a ^ normal_b).probability_distribution.Pdf(2.0);
-//   ASSERT_NEAR((normal_a ^ normal_b).probability_distribution.Pdf(1.0), 0.0759651, 1e-8);
-// }
+  ASSERT_THROW((normal_a ^ normal_b).probability_distribution.Pdf(1.0), std::logic_error);
+}
+
+TEST_F(GenericDistributionTestFixture, CDFOfStandardNormalRandomVariables) {
+  RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
+  RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
+
+  // TODO: Bad performance of CDF integration. Find better integration scheme.
+  auto generic_rv = normal_a*normal_b;
+  ASSERT_NEAR(generic_rv.probability_distribution.Cdf(0.0), 0.5, 1e-5);
+  ASSERT_NEAR(generic_rv.probability_distribution.Cdf(INFINITY), 1.0, 1e-1);
+}

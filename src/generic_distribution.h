@@ -103,19 +103,19 @@ double GenericDistribution<double, U>::Pdf(double x)
 template<typename T, typename U>
 double GenericDistribution<T, U>::Cdf(double x) 
 {
-    throw std::logic_error("Method not implemented");
+    return arithmetic::cdf::compute_cdf([this](double y) {return this->Pdf(y);}, x);
 };
 
 template<typename T>
 double GenericDistribution<T, double>::Cdf(double x) 
 {
-    throw std::logic_error("Method not implemented");
+    return arithmetic::cdf::compute_cdf([this](double y) {return this->Pdf(y);}, x);
 };
 
 template<typename U>
 double GenericDistribution<double, U>::Cdf(double x) 
 {
-    throw std::logic_error("Method not implemented");
+    return arithmetic::cdf::compute_cdf([this](double y) {return this->Pdf(y);}, x);
 };
 
 template<typename T, typename U>

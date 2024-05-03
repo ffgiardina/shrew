@@ -8,11 +8,9 @@
 namespace shrew {
 namespace random_variable {
 namespace arithmetic {
+
 namespace pdf {
-
-// TODO: think about injection of the integrator
 numerical_methods::InfiniteDomainGaussKronrod integrator = numerical_methods::InfiniteDomainGaussKronrod();
-
 double eval_random_variable_operation(double x, Operation operation, std::function<double(double)> l_eval, std::function<double(double)> r_eval, numerical_methods::Integrator &integrator )
 {
     auto addition_integrand = [x, l_eval, r_eval](double y)
@@ -104,6 +102,17 @@ double right_const_operation(double x, Operation operation, std::function<double
 }
 
 }  // namespace pdf
+
+namespace cdf {
+numerical_methods::SemiInfiniteGaussKronrod integrator = numerical_methods::SemiInfiniteGaussKronrod(0.0);
+
+double compute_cdf(std::function<double(double)> pdf, double x)
+{
+    integrator.upper_bound = x;
+    return integrator.Integrate(pdf);
+};
+
+}  // namespace cdf
 }  // namespace arithmetic
 }  // namespace random_variable
 }  // namespace shrew

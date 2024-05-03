@@ -18,5 +18,16 @@ double InfiniteDomainGaussKronrod::Integrate(std::function<double(double)> feval
     return boost::math::quadrature::gauss_kronrod<double, n_point>::integrate(this->MapDomain(feval), 0.0, 1.0, 0, 0, &error);
 };
 
+std::function<double(double)> SemiInfiniteGaussKronrod::MapDomain(std::function<double(double)> map)
+{
+    return [](double x) { return x;};
+};
+
+double SemiInfiniteGaussKronrod::Integrate(std::function<double(double)> feval)
+{
+    double  error;
+    return boost::math::quadrature::gauss_kronrod<double, n_point>::integrate(feval, -INFINITY, upper_bound, 0, 0, &error);
+};
+
 }  // namespace numerical_methods
 }  // namespace shrew
