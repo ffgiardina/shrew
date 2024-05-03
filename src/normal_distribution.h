@@ -27,11 +27,7 @@ class NormalDistribution : public ProbabilityDistribution {
 
   NormalDistribution(double mu, double sigma) : mu(mu), sigma(sigma) {};
   NormalDistribution() {};
-
 };
-
-RandomVariable<NormalDistribution> operator+(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
-RandomVariable<NormalDistribution> operator-(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
 
 RandomVariable<NormalDistribution> operator+(double var_a, RandomVariable<NormalDistribution> const &var_b);
 RandomVariable<NormalDistribution> operator+(RandomVariable<NormalDistribution> const &var_a, double var_b);
@@ -39,12 +35,14 @@ RandomVariable<NormalDistribution> operator-(double var_a, RandomVariable<Normal
 RandomVariable<NormalDistribution> operator-(RandomVariable<NormalDistribution> const &var_a, double var_b);
 RandomVariable<NormalDistribution> operator*(double var_a, RandomVariable<NormalDistribution> const &var_b);
 RandomVariable<NormalDistribution> operator*(RandomVariable<NormalDistribution> const &var_a, double var_b);
-RandomVariable<NormalDistribution> operator/(double var_a, RandomVariable<NormalDistribution> const &var_b);
 RandomVariable<NormalDistribution> operator/(RandomVariable<NormalDistribution> const &var_a, double var_b);
 
-RandomVariable<GenericDistribution> operator*(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
-RandomVariable<GenericDistribution> operator/(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
-
+RandomVariable<NormalDistribution> operator+(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
+RandomVariable<NormalDistribution> operator-(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
+RandomVariable<GenericDistribution<double, NormalDistribution>> operator/(double var_a, RandomVariable<NormalDistribution> const &var_b);
+RandomVariable<GenericDistribution<NormalDistribution, NormalDistribution>> operator*(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
+RandomVariable<GenericDistribution<NormalDistribution, NormalDistribution>> operator/(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
+RandomVariable<GenericDistribution<double, NormalDistribution>> operator^(double var_a, RandomVariable<NormalDistribution> const &var_b);
 
 }  // namespace random_variable
 }  // namespace shrew

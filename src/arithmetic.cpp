@@ -8,11 +8,12 @@
 namespace shrew {
 namespace random_variable {
 namespace arithmetic {
+namespace pdf {
 
 // TODO: think about injection of the integrator
 numerical_methods::InfiniteDomainGaussKronrod integrator = numerical_methods::InfiniteDomainGaussKronrod();
 
-double evaluate_pdf(double x, Operation operation, std::function<double(double)> l_eval, std::function<double(double)> r_eval, numerical_methods::Integrator &integrator )
+double eval_random_variable_operation(double x, Operation operation, std::function<double(double)> l_eval, std::function<double(double)> r_eval, numerical_methods::Integrator &integrator )
 {
     auto addition_integrand = [x, l_eval, r_eval](double y)
     {
@@ -31,7 +32,13 @@ double evaluate_pdf(double x, Operation operation, std::function<double(double)>
 
     auto division_integrand = [x, l_eval, r_eval](double y)
     {
-        return abs(y) * l_eval(y) * r_eval(x * y);
+        return abs(y) * l_eval(x * y) * r_eval(y);
+    };
+
+    auto exponentiation_integrand = [x, l_eval, r_eval](double y)
+    {
+        auto log_leval = [l_eval](double y) {return exp(y) * l_eval(exp(y));};
+        return 1/abs(y) * log_leval(y) * r_eval(x / y);
     };
 
     switch (operation) 
@@ -45,10 +52,58 @@ double evaluate_pdf(double x, Operation operation, std::function<double(double)>
         case division:
             return integrator.Integrate(division_integrand);
         case exponentiation:
-            return 1.0;
-    }
+            throw std::logic_error("Exponentiation of random variables not implemented");
+    };
+
+    throw std::logic_error("Operation not implemented");
 };
 
+double left_const_operation(double x, Operation operation, double l_eval, std::function<double(double)> r_eval )
+{
+    switch (operation) 
+    {
+        case addition:
+            return l_eval + r_eval(x);
+        case subtraction:
+            return l_eval - r_eval(x);
+        case multiplication:
+            return 1/abs(l_eval) * r_eval(x / l_eval);
+        case division:
+            return 1/(abs(l_eval) * pow(x, 2)) * r_eval( 1 / (x * l_eval));
+        case exponentiation:
+            if (l_eval < 0)
+            {
+                throw std::logic_error("Negative exponentiation not implemented");
+            }
+            else
+            {
+                return abs(1 / (x * log(abs(l_eval)))) * r_eval(log(abs(x)) / log(abs(l_eval))) ;
+            };
+    };
+
+    return 0.0;
+};
+
+double right_const_operation(double x, Operation operation, std::function<double(double)> l_eval, double r_eval )
+{
+    switch (operation) 
+    {
+        case addition:
+            return l_eval(x) + r_eval;
+        case subtraction:
+            return l_eval(x) - r_eval;
+        case multiplication:
+            return 1/abs(r_eval) * l_eval(x / r_eval);
+        case division:
+            return abs(r_eval) * l_eval(x * r_eval);
+        case exponentiation:
+            throw std::logic_error("Negative exponentiation not implemented");
+    };
+
+    return 0.0;
+}
+
+}  // namespace pdf
 }  // namespace arithmetic
 }  // namespace random_variable
 }  // namespace shrew

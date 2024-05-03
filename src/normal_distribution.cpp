@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include "normal_distribution.h"
 #include "arithmetic.h"
@@ -75,9 +76,9 @@ RandomVariable<NormalDistribution> operator*(RandomVariable<NormalDistribution> 
     return RandomVariable<NormalDistribution>(NormalDistribution(mu, sigma));
 };
 
-RandomVariable<NormalDistribution> operator/(double var_a, RandomVariable<NormalDistribution> const &var_b)
+RandomVariable<GenericDistribution<double, NormalDistribution>> operator/(double var_a, RandomVariable<NormalDistribution> const &var_b)
 {
-    throw std::logic_error( "Division by normal random variables is currently not supported" );
+    return RandomVariable<GenericDistribution<double, NormalDistribution>>(GenericDistribution<double, NormalDistribution>(var_a, std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::division));
 };
 
 RandomVariable<NormalDistribution> operator/(RandomVariable<NormalDistribution> const &var_a, double var_b)
@@ -87,14 +88,19 @@ RandomVariable<NormalDistribution> operator/(RandomVariable<NormalDistribution> 
     return RandomVariable<NormalDistribution>(NormalDistribution(mu, sigma));
 };
 
-RandomVariable<GenericDistribution> operator*(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b)
+RandomVariable<GenericDistribution<NormalDistribution, NormalDistribution>> operator*(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b)
 {
-    return GenericDistribution(std::make_shared<NormalDistribution>(var_a.probability_distribution), std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::multiplication);
+    return RandomVariable<GenericDistribution<NormalDistribution, NormalDistribution>>(GenericDistribution<NormalDistribution, NormalDistribution>(std::make_shared<NormalDistribution>(var_a.probability_distribution), std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::multiplication));
 };
 
-RandomVariable<GenericDistribution> operator/(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b)
+RandomVariable<GenericDistribution<NormalDistribution, NormalDistribution>> operator/(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b)
 {
-    return GenericDistribution(std::make_shared<NormalDistribution>(var_a.probability_distribution), std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::division);
+    return RandomVariable<GenericDistribution<NormalDistribution, NormalDistribution>>(GenericDistribution<NormalDistribution, NormalDistribution>(std::make_shared<NormalDistribution>(var_a.probability_distribution), std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::division));
+};
+
+RandomVariable<GenericDistribution<double, NormalDistribution>> operator^(double var_a, RandomVariable<NormalDistribution> const &var_b)
+{
+    return RandomVariable<GenericDistribution<double, NormalDistribution>>(GenericDistribution<double, NormalDistribution>(var_a, std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::exponentiation));
 };
 
 }  // namespace random_variable

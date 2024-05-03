@@ -58,5 +58,5 @@ TEST_F(NormalDistributionTestFixture, ConstantMultiplication) {
 
 TEST_F(NormalDistributionTestFixture, ConstantDivision) {
   ASSERT_NEAR((grv / 2).probability_distribution.Pdf(0.0), 0.3989422804014337 * 2.0, 1e-14);
-  EXPECT_THROW((2 / grv).probability_distribution.Pdf(0.0), std::logic_error);
+  ASSERT_NEAR((1 / grv).probability_distribution.Pdf(1.0), 0.2419707245191433, 1e-14);
 }
