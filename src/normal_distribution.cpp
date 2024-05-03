@@ -76,9 +76,9 @@ RandomVariable<NormalDistribution> operator*(RandomVariable<NormalDistribution> 
     return RandomVariable<NormalDistribution>(NormalDistribution(mu, sigma));
 };
 
-RandomVariable<GenericDistribution<double, NormalDistribution>> operator/(double var_a, RandomVariable<NormalDistribution> const &var_b)
+RandomVariable<CompoundDistribution<double, NormalDistribution>> operator/(double var_a, RandomVariable<NormalDistribution> const &var_b)
 {
-    return RandomVariable<GenericDistribution<double, NormalDistribution>>(GenericDistribution<double, NormalDistribution>(var_a, std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::division));
+    return RandomVariable<CompoundDistribution<double, NormalDistribution>>(CompoundDistribution<double, NormalDistribution>(var_a, std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::division));
 };
 
 RandomVariable<NormalDistribution> operator/(RandomVariable<NormalDistribution> const &var_a, double var_b)
@@ -88,19 +88,19 @@ RandomVariable<NormalDistribution> operator/(RandomVariable<NormalDistribution> 
     return RandomVariable<NormalDistribution>(NormalDistribution(mu, sigma));
 };
 
-RandomVariable<GenericDistribution<NormalDistribution, NormalDistribution>> operator*(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b)
+RandomVariable<CompoundDistribution<NormalDistribution, NormalDistribution>> operator*(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b)
 {
-    return RandomVariable<GenericDistribution<NormalDistribution, NormalDistribution>>(GenericDistribution<NormalDistribution, NormalDistribution>(std::make_shared<NormalDistribution>(var_a.probability_distribution), std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::multiplication));
+    return RandomVariable<CompoundDistribution<NormalDistribution, NormalDistribution>>(CompoundDistribution<NormalDistribution, NormalDistribution>(std::make_shared<NormalDistribution>(var_a.probability_distribution), std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::multiplication));
 };
 
-RandomVariable<GenericDistribution<NormalDistribution, NormalDistribution>> operator/(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b)
+RandomVariable<CompoundDistribution<NormalDistribution, NormalDistribution>> operator/(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b)
 {
-    return RandomVariable<GenericDistribution<NormalDistribution, NormalDistribution>>(GenericDistribution<NormalDistribution, NormalDistribution>(std::make_shared<NormalDistribution>(var_a.probability_distribution), std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::division));
+    return RandomVariable<CompoundDistribution<NormalDistribution, NormalDistribution>>(CompoundDistribution<NormalDistribution, NormalDistribution>(std::make_shared<NormalDistribution>(var_a.probability_distribution), std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::division));
 };
 
-RandomVariable<GenericDistribution<double, NormalDistribution>> operator^(double var_a, RandomVariable<NormalDistribution> const &var_b)
+RandomVariable<CompoundDistribution<double, NormalDistribution>> operator^(double var_a, RandomVariable<NormalDistribution> const &var_b)
 {
-    return RandomVariable<GenericDistribution<double, NormalDistribution>>(GenericDistribution<double, NormalDistribution>(var_a, std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::exponentiation));
+    return RandomVariable<CompoundDistribution<double, NormalDistribution>>(CompoundDistribution<double, NormalDistribution>(var_a, std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::exponentiation));
 };
 
 }  // namespace random_variable

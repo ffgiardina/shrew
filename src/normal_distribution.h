@@ -1,7 +1,7 @@
 #pragma once
 
 #include "random_variable.h"
-#include "generic_distribution.h"
+#include "compound_distribution.h"
 #include <complex>
 
 namespace shrew {
@@ -39,10 +39,10 @@ RandomVariable<NormalDistribution> operator/(RandomVariable<NormalDistribution> 
 
 RandomVariable<NormalDistribution> operator+(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
 RandomVariable<NormalDistribution> operator-(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
-RandomVariable<GenericDistribution<double, NormalDistribution>> operator/(double var_a, RandomVariable<NormalDistribution> const &var_b);
-RandomVariable<GenericDistribution<NormalDistribution, NormalDistribution>> operator*(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
-RandomVariable<GenericDistribution<NormalDistribution, NormalDistribution>> operator/(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
-RandomVariable<GenericDistribution<double, NormalDistribution>> operator^(double var_a, RandomVariable<NormalDistribution> const &var_b);
+RandomVariable<CompoundDistribution<double, NormalDistribution>> operator/(double var_a, RandomVariable<NormalDistribution> const &var_b);
+RandomVariable<CompoundDistribution<NormalDistribution, NormalDistribution>> operator*(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
+RandomVariable<CompoundDistribution<NormalDistribution, NormalDistribution>> operator/(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b);
+RandomVariable<CompoundDistribution<double, NormalDistribution>> operator^(double var_a, RandomVariable<NormalDistribution> const &var_b);
 
 }  // namespace random_variable
 }  // namespace shrew

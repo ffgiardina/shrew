@@ -39,7 +39,7 @@ enable_testing()
 message(PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 message(PROJECT_SOURCE_DIR="${boostmath_SOURCE_DIR}")
 
-add_executable(shrew_tests tests/normal_distribution.cpp tests/generic_distribution.cpp)
+add_executable(shrew_tests tests/normal_distribution.cpp tests/compound_distribution.cpp)
 target_link_libraries(
   shrew_tests
   GTest::gtest_main

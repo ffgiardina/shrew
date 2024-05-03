@@ -1,5 +1,5 @@
 #include <math.h>
-#include "generic_distribution.h"
+#include "compound_distribution.h"
 #include <functional>
 #include <cmath>
 #include "arithmetic.h"
