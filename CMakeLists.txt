@@ -23,7 +23,7 @@ FetchContent_MakeAvailable(
   boostmath)
 
 # Create library
-add_library(${PROJECT_NAME} STATIC src/numerical_methods.cpp src/arithmetic.cpp src/normal_distribution.cpp)
+add_library(${PROJECT_NAME} STATIC src/numerical_methods.cpp src/arithmetic.cpp src/normal_distribution.cpp src/generic_distribution.cpp)
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
@@ -36,10 +36,7 @@ target_include_directories(${PROJECT_NAME}
 # Test
 enable_testing()
 
-message(PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
-message(PROJECT_SOURCE_DIR="${boostmath_SOURCE_DIR}")
-
-add_executable(shrew_tests tests/normal_distribution.cpp tests/compound_distribution.cpp)
+add_executable(shrew_tests tests/normal_distribution.cpp tests/compound_distribution.cpp tests/generic_distribution.cpp)
 target_link_libraries(
   shrew_tests
   GTest::gtest_main

@@ -10,7 +10,7 @@
 namespace shrew {
 namespace random_variable {
 
-/// @brief Generic probability distribution 
+/// @brief Compound probability distribution created from two underlying distributions
 /// @tparam T 
 /// @tparam U 
 template<typename T, typename U>
@@ -103,19 +103,19 @@ double CompoundDistribution<double, U>::Pdf(double x)
 template<typename T, typename U>
 double CompoundDistribution<T, U>::Cdf(double x) 
 {
-    return arithmetic::cdf::compute_cdf([this](double y) {return this->Pdf(y);}, x);
+    return arithmetic::cdf::compute([this](double y) {return this->Pdf(y);}, x);
 };
 
 template<typename T>
 double CompoundDistribution<T, double>::Cdf(double x) 
 {
-    return arithmetic::cdf::compute_cdf([this](double y) {return this->Pdf(y);}, x);
+    return arithmetic::cdf::compute([this](double y) {return this->Pdf(y);}, x);
 };
 
 template<typename U>
 double CompoundDistribution<double, U>::Cdf(double x) 
 {
-    return arithmetic::cdf::compute_cdf([this](double y) {return this->Pdf(y);}, x);
+    return arithmetic::cdf::compute([this](double y) {return this->Pdf(y);}, x);
 };
 
 template<typename T, typename U>

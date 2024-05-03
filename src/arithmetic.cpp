@@ -106,7 +106,7 @@ double right_const_operation(double x, Operation operation, std::function<double
 namespace cdf {
 numerical_methods::SemiInfiniteGaussKronrod integrator = numerical_methods::SemiInfiniteGaussKronrod(0.0);
 
-double compute_cdf(std::function<double(double)> pdf, double x)
+double compute(std::function<double(double)> pdf, double x)
 {
     integrator.upper_bound = x;
     return integrator.Integrate(pdf);

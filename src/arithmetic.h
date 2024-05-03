@@ -20,7 +20,7 @@ double right_const_operation(double x, Operation operation, std::function<double
 }  // namespace pdf
 
 namespace cdf {
-double compute_cdf(std::function<double(double)> pdf, double x);
+double compute(std::function<double(double)> pdf, double x);
 }  // namespace cdf
 
 }  // namespace arithmetic
