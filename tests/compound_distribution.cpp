@@ -1,49 +1,56 @@
 #include <gtest/gtest.h>
-#include "../src/normal_distribution.h"
-#include "../src/compound_distribution.h"
+#include "../src/ProbabilityDistribution/normal_distribution.h"
+#include "../src/ProbabilityDistribution/compound_distribution.h"
 #include "../src/numerical_methods.h"
 
 using namespace shrew::random_variable;
 
-class CompoundDistributionTestFixture : public testing::Test {
- protected:
+class CompoundDistributionTestFixture : public testing::Test
+{
+protected:
   CompoundDistributionTestFixture() {}
 };
 
-TEST_F(CompoundDistributionTestFixture, IntegrationVerification) {
+TEST_F(CompoundDistributionTestFixture, IntegrationVerification)
+{
   shrew::numerical_methods::InfiniteDomainGaussKronrod integrator = shrew::numerical_methods::InfiniteDomainGaussKronrod();
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(0, 1.0));
 
-  double res = integrator.Integrate([&normal_a](double x){return normal_a.probability_distribution.Pdf(x);});
+  double res = integrator.Integrate([&normal_a](double x)
+                                    { return normal_a.probability_distribution.Pdf(x); });
   ASSERT_NEAR(res, 1.0, 1e-15);
 }
 
-TEST_F(CompoundDistributionTestFixture, MultiplicationOfTwoNormalRandomVariables) {
+TEST_F(CompoundDistributionTestFixture, MultiplicationOfTwoNormalRandomVariables)
+{
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(-1.0, 1.0));
   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(1.0, 1.0));
   ASSERT_NEAR((normal_a * normal_b).probability_distribution.Pdf(1.0), 0.0759651, 1e-8);
 }
 
-TEST_F(CompoundDistributionTestFixture, DivisionOfTwoNormalRandomVariablesResultsInCauchyDistribution) {
+TEST_F(CompoundDistributionTestFixture, DivisionOfTwoNormalRandomVariablesResultsInCauchyDistribution)
+{
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
   ASSERT_NEAR((normal_a / normal_b).probability_distribution.Pdf(0.0), 0.318309886183790, 1e-15);
 }
 
-TEST_F(CompoundDistributionTestFixture, LeftConstantExponentiation) {
+TEST_F(CompoundDistributionTestFixture, LeftConstantExponentiation)
+{
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
-    
+
   ASSERT_NEAR((2.0 ^ normal_a).probability_distribution.Pdf(1.0), 0.575, 1e-3);
   ASSERT_THROW(((-2.0) ^ normal_a).probability_distribution.Pdf(1.0), std::logic_error);
 }
 
-TEST_F(CompoundDistributionTestFixture, AdditionOfTwoNormalRandomVariablesAsGenerics) {
+TEST_F(CompoundDistributionTestFixture, AdditionOfTwoNormalRandomVariablesAsGenerics)
+{
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(1.0, sqrt(2.0)));
   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(-1.0, sqrt(2.0)));
-  
+
   CompoundDistribution g_dist_a = CompoundDistribution(std::make_shared<NormalDistribution>(NormalDistribution(1.0, 1.0)), std::make_shared<NormalDistribution>(NormalDistribution(0.0, 1.0)), arithmetic::Operation::addition);
   CompoundDistribution g_dist_b = CompoundDistribution(std::make_shared<NormalDistribution>(NormalDistribution(-1.0, 1.0)), std::make_shared<NormalDistribution>(NormalDistribution(0.0, 1.0)), arithmetic::Operation::addition);
-  
+
   using GNN = CompoundDistribution<NormalDistribution, NormalDistribution>;
   RandomVariable<GNN> gen_a = RandomVariable<GNN>(g_dist_a);
   RandomVariable<GNN> gen_b = RandomVariable<GNN>(g_dist_b);
@@ -51,13 +58,14 @@ TEST_F(CompoundDistributionTestFixture, AdditionOfTwoNormalRandomVariablesAsGene
   ASSERT_NEAR((gen_a + gen_b).probability_distribution.Pdf(0.0), (normal_a + normal_b).probability_distribution.Pdf(0.0), 1e-15);
 }
 
-TEST_F(CompoundDistributionTestFixture, SubtractionOfTwoNormalRandomVariablesAsGenerics) {
+TEST_F(CompoundDistributionTestFixture, SubtractionOfTwoNormalRandomVariablesAsGenerics)
+{
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(1.0, sqrt(2.0)));
   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(-1.0, sqrt(2.0)));
 
   CompoundDistribution g_dist_a = CompoundDistribution(std::make_shared<NormalDistribution>(NormalDistribution(1.0, 1.0)), std::make_shared<NormalDistribution>(NormalDistribution(0.0, 1.0)), arithmetic::Operation::addition);
   CompoundDistribution g_dist_b = CompoundDistribution(std::make_shared<NormalDistribution>(NormalDistribution(-1.0, 1.0)), std::make_shared<NormalDistribution>(NormalDistribution(0.0, 1.0)), arithmetic::Operation::addition);
-  
+
   using GNN = CompoundDistribution<NormalDistribution, NormalDistribution>;
   RandomVariable<GNN> gen_a = RandomVariable<GNN>(g_dist_a);
   RandomVariable<GNN> gen_b = RandomVariable<GNN>(g_dist_b);
@@ -66,19 +74,23 @@ TEST_F(CompoundDistributionTestFixture, SubtractionOfTwoNormalRandomVariablesAsG
   ASSERT_NEAR((gen_b - gen_a).probability_distribution.Pdf(0.0), (normal_b - normal_a).probability_distribution.Pdf(0.0), 1e-15);
 }
 
-TEST_F(CompoundDistributionTestFixture, ExponentiationOfTwoNormalRandomVariables) {
+TEST_F(CompoundDistributionTestFixture, ExponentiationOfTwoNormalRandomVariables)
+{
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
-  
+
   ASSERT_THROW((normal_a ^ normal_b).probability_distribution.Pdf(1.0), std::logic_error);
 }
 
-TEST_F(CompoundDistributionTestFixture, CDFOfStandardNormalRandomVariables) {
+TEST_F(CompoundDistributionTestFixture, CDFOfStandardNormalRandomVariables)
+{
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
 
   // TODO: Bad performance of CDF integration. Find better integration scheme.
-  auto generic_rv = normal_a*normal_b;
-  ASSERT_NEAR(generic_rv.probability_distribution.Cdf(0.0), 0.5, 1e-5);
-  ASSERT_NEAR(generic_rv.probability_distribution.Cdf(INFINITY), 1.0, 1e-1);
+  auto generic_rv = normal_a * normal_b;
+  auto a = generic_rv.probability_distribution.Cdf(0.0);
+  auto b = generic_rv.probability_distribution.Cdf(INFINITY);
+  ASSERT_NEAR(generic_rv.probability_distribution.Cdf(0.0), 0.5, 1e-6);
+  ASSERT_NEAR(generic_rv.probability_distribution.Cdf(INFINITY), 1.0, 1e-6);
 }

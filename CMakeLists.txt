@@ -23,7 +23,7 @@ FetchContent_MakeAvailable(
   boostmath)
 
 # Create library
-add_library(${PROJECT_NAME} STATIC src/numerical_methods.cpp src/arithmetic.cpp src/normal_distribution.cpp src/generic_distribution.cpp)
+add_library(${PROJECT_NAME} STATIC src/numerical_methods.cpp src/arithmetic.cpp src/ProbabilityDistribution/normal_distribution.cpp src/ProbabilityDistribution/generic_distribution.cpp)
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
