@@ -13,7 +13,7 @@ protected:
 
 TEST_F(CompoundDistributionTestFixture, IntegrationVerification)
 {
-  shrew::numerical_methods::InfiniteDomainGaussKronrod integrator = shrew::numerical_methods::InfiniteDomainGaussKronrod();
+  const shrew::numerical_methods::Integrator &integrator = shrew::numerical_methods::GaussKronrod();
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(0, 1.0));
 
   double res = integrator.Integrate([&normal_a](double x)
@@ -87,10 +87,7 @@ TEST_F(CompoundDistributionTestFixture, CDFOfStandardNormalRandomVariables)
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
 
-  // TODO: Bad performance of CDF integration. Find better integration scheme.
   auto generic_rv = normal_a * normal_b;
-  auto a = generic_rv.probability_distribution.Cdf(0.0);
-  auto b = generic_rv.probability_distribution.Cdf(INFINITY);
   ASSERT_NEAR(generic_rv.probability_distribution.Cdf(0.0), 0.5, 1e-6);
   ASSERT_NEAR(generic_rv.probability_distribution.Cdf(INFINITY), 1.0, 1e-6);
 }

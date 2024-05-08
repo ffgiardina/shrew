@@ -9,6 +9,7 @@ namespace shrew
 {
     namespace random_variable
     {
+        const numerical_methods::Integrator& GenericDistribution::generic_integrator = numerical_methods::GaussKronrod();
 
         double GenericDistribution::Pdf(double x)
         {
@@ -17,7 +18,7 @@ namespace shrew
 
         double GenericDistribution::Cdf(double x)
         {
-            return arithmetic::cdf::compute(this->pdf, x);
+            return numerical_methods::cdf::compute(this->pdf, x, generic_integrator);
         };
 
         double GenericDistribution::Mgf(double t)

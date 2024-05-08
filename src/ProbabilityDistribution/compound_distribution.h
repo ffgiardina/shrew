@@ -35,6 +35,9 @@ namespace shrew
             std::shared_ptr<U> r_operand;
             arithmetic::Operation operation;
 
+            static const numerical_methods::Integrator &compound_integrator;
+            static const numerical_methods::Integrator &cdf_integrator;
+
             CompoundDistribution(std::shared_ptr<T> lptr, std::shared_ptr<U> rptr, arithmetic::Operation operation) : l_operand(lptr), r_operand(rptr), operation(operation){};
             CompoundDistribution(){};
         };
@@ -58,6 +61,9 @@ namespace shrew
             std::shared_ptr<T> l_operand;
             double r_operand;
             arithmetic::Operation operation;
+
+            static const numerical_methods::Integrator &compound_integrator;
+            static const numerical_methods::Integrator &cdf_integrator;
 
             CompoundDistribution(std::shared_ptr<T> lptr, double rptr, arithmetic::Operation operation) : l_operand(lptr), r_operand(rptr), operation(operation){};
             CompoundDistribution(){};
@@ -83,24 +89,46 @@ namespace shrew
             std::shared_ptr<U> r_operand;
             arithmetic::Operation operation;
 
+            static const numerical_methods::Integrator &compound_integrator;
+            static const numerical_methods::Integrator &cdf_integrator;
+
             CompoundDistribution(double lptr, std::shared_ptr<U> rptr, arithmetic::Operation operation) : l_operand(lptr), r_operand(rptr), operation(operation){};
             CompoundDistribution(){};
         };
 
         template <typename T, typename U>
+        const numerical_methods::Integrator &CompoundDistribution<T, U>::compound_integrator = numerical_methods::MappedGaussKronrod();
+
+        template <typename T>
+        const numerical_methods::Integrator &CompoundDistribution<T, double>::compound_integrator = numerical_methods::MappedGaussKronrod();
+
+        template <typename U>
+        const numerical_methods::Integrator &CompoundDistribution<double, U>::compound_integrator = numerical_methods::MappedGaussKronrod();
+
+        template <typename T, typename U>
+        const numerical_methods::Integrator &CompoundDistribution<T, U>::cdf_integrator = numerical_methods::GaussKronrod();
+
+        template <typename T>
+        const numerical_methods::Integrator &CompoundDistribution<T, double>::cdf_integrator = numerical_methods::GaussKronrod();
+
+        template <typename U>
+        const numerical_methods::Integrator &CompoundDistribution<double, U>::cdf_integrator = numerical_methods::GaussKronrod();
+
+        template <typename T, typename U>
         double CompoundDistribution<T, U>::Pdf(double x)
         {
-            return arithmetic::pdf::eval_random_variable_operation(
+            return arithmetic::evaluate_pdf::random_variable_operation(
                 x, operation, [this](double t)
                 { return l_operand->Pdf(t); },
                 [this](double t)
-                { return r_operand->Pdf(t); });
+                { return r_operand->Pdf(t); },
+                compound_integrator);
         };
 
         template <typename T>
         double CompoundDistribution<T, double>::Pdf(double x)
         {
-            return arithmetic::pdf::right_const_operation(
+            return arithmetic::evaluate_pdf::right_const_operation(
                 x, operation, [this](double t)
                 { return l_operand->Pdf(t); },
                 r_operand);
@@ -109,32 +137,32 @@ namespace shrew
         template <typename U>
         double CompoundDistribution<double, U>::Pdf(double x)
         {
-            return arithmetic::pdf::left_const_operation(x, operation, l_operand, [this](double t)
-                                                         { return r_operand->Pdf(t); });
+            return arithmetic::evaluate_pdf::left_const_operation(x, operation, l_operand, [this](double t)
+                                                                  { return r_operand->Pdf(t); });
         };
 
         template <typename T, typename U>
         double CompoundDistribution<T, U>::Cdf(double x)
         {
-            return arithmetic::cdf::compute([this](double y)
-                                            { return this->Pdf(y); },
-                                            x);
+            return numerical_methods::cdf::compute([this](double y)
+                                                   { return this->Pdf(y); },
+                                                   x, cdf_integrator);
         };
 
         template <typename T>
         double CompoundDistribution<T, double>::Cdf(double x)
         {
-            return arithmetic::cdf::compute([this](double y)
-                                            { return this->Pdf(y); },
-                                            x);
+            return numerical_methods::cdf::compute([this](double y)
+                                                   { return this->Pdf(y); },
+                                                   x, cdf_integrator);
         };
 
         template <typename U>
         double CompoundDistribution<double, U>::Cdf(double x)
         {
-            return arithmetic::cdf::compute([this](double y)
-                                            { return this->Pdf(y); },
-                                            x);
+            return numerical_methods::cdf::compute([this](double y)
+                                                   { return this->Pdf(y); },
+                                                   x, cdf_integrator);
         };
 
         template <typename T, typename U>

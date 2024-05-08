@@ -27,6 +27,8 @@ namespace shrew
 
       std::function<double(double)> pdf;
 
+      static const numerical_methods::Integrator &generic_integrator;
+
       GenericDistribution(std::function<double(double)> pdf) : pdf(pdf){};
       GenericDistribution(){};
     };

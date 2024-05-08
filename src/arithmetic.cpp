@@ -12,10 +12,9 @@ namespace shrew
         namespace arithmetic
         {
 
-            namespace pdf
+            namespace evaluate_pdf
             {
-                numerical_methods::InfiniteDomainGaussKronrod integrator = numerical_methods::InfiniteDomainGaussKronrod();
-                double eval_random_variable_operation(double x, Operation operation, std::function<double(double)> l_eval, std::function<double(double)> r_eval, numerical_methods::Integrator &integrator)
+                double random_variable_operation(double x, Operation operation, std::function<double(double)> l_eval, std::function<double(double)> r_eval, const numerical_methods::Integrator &integrator)
                 {
                     auto addition_integrand = [x, l_eval, r_eval](double y)
                     {
@@ -106,19 +105,8 @@ namespace shrew
                     return 0.0;
                 }
 
-            } // namespace pdf
+            } // namespace evaluate_pdf
 
-            namespace cdf
-            {
-                numerical_methods::SemiInfiniteGaussKronrod integrator = numerical_methods::SemiInfiniteGaussKronrod(0.0);
-
-                double compute(std::function<double(double)> pdf, double x)
-                {
-                    integrator.upper_bound = x;
-                    return integrator.Integrate(pdf);
-                };
-
-            } // namespace cdf
-        }     // namespace arithmetic
-    }         // namespace random_variable
+        } // namespace arithmetic
+    }     // namespace random_variable
 } // namespace shrew

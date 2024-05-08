@@ -9,37 +9,37 @@ namespace shrew
 {
   namespace numerical_methods
   {
+    struct IntegratorConfig
+    {
+        static const unsigned int gauss_kronrod_n{211};
+        static const unsigned int gauss_kronrod_max_depth{2};
+        static const unsigned int mapped_gauss_kronrod_max_depth{0};
+    };
 
     /// @brief Abstract interface for a numerical integrator
     class Integrator
     {
     public:
-      // Function that maps the integration domain to [0, 1]
-      virtual std::function<double(double)> MapDomain(std::function<double(double)> map) = 0;
-
       // Computes the integration result over the mapped domain
-      virtual double Integrate(std::function<double(double)> feval) = 0;
+      virtual double Integrate(std::function<double(double)> feval, double lower_bound = -INFINITY, double upper_bound = INFINITY) const = 0;
     };
 
-    class InfiniteDomainGaussKronrod : public Integrator
+    class GaussKronrod : public Integrator
     {
     public:
-      virtual std::function<double(double)> MapDomain(std::function<double(double)> map) override;
-      virtual double Integrate(std::function<double(double)> feval) override;
-
-      static const unsigned int n_point = 211;
+      virtual double Integrate(std::function<double(double)> feval, double lower_limit, double upper_limit) const override;
     };
 
-    class SemiInfiniteGaussKronrod : public Integrator
+    class MappedGaussKronrod : public Integrator
     {
     public:
-      virtual std::function<double(double)> MapDomain(std::function<double(double)> map) override;
-      virtual double Integrate(std::function<double(double)> feval) override;
-
-      double upper_bound;
-      static const unsigned int n_point = 211;
-      SemiInfiniteGaussKronrod(double upper_bound) : upper_bound(upper_bound){};
+      virtual double Integrate(std::function<double(double)> feval, double lower_limit = 0, double upper_limit = 1) const override;
+      static const std::function<double(double)> MapDomain(std::function<double(double)> map);
     };
 
-  } // namespace numerical_methods
+    namespace cdf
+    {
+      double compute(std::function<double(double)> pdf, double x, numerical_methods::Integrator const &integrator);
+    } // namespace cdf
+  }   // namespace numerical_methods
 } // namespace shrew
