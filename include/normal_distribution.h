@@ -1,8 +1,7 @@
 #pragma once
 
-#include "random_variable.h"
+#include "../src/random_variable.h"
 #include "compound_distribution.h"
-#include <complex>
 
 namespace shrew
 {

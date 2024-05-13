@@ -1,9 +1,7 @@
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include "normal_distribution.h"
 #include "arithmetic.h"
-#include <cmath>
-#include <complex>
+#include "normal_distribution.h"
+
+#define M_PI 3.14159265358979323846 /* pi */
 
 namespace shrew
 {

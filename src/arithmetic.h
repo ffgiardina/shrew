@@ -2,8 +2,8 @@
 
 #include "random_variable.h"
 #include "numerical_methods.h"
+
 #include <functional>
-#include <complex>
 #include <memory>
 
 namespace shrew

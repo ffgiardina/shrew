@@ -1,7 +1,8 @@
+#include "compound_distribution.h"
+#include "generic_distribution.h"
+#include "normal_distribution.h"
+
 #include <gtest/gtest.h>
-#include "../src/ProbabilityDistribution/normal_distribution.h"
-#include "../src/ProbabilityDistribution/compound_distribution.h"
-#include "../src/ProbabilityDistribution/generic_distribution.h"
 
 #define M_PI 3.14159265358979323846 /* pi */
 using namespace shrew::random_variable;

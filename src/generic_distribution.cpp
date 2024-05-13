@@ -1,8 +1,6 @@
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include "generic_distribution.h"
 #include "arithmetic.h"
-#include <cmath>
+#include "generic_distribution.h"
+
 #include <complex>
 
 namespace shrew

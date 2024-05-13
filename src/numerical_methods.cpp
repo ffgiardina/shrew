@@ -1,8 +1,6 @@
-#include <math.h>
-#include <functional>
-#include <cmath>
-#include "numerical_methods.h"
 #include <boost/math/quadrature/gauss_kronrod.hpp>
+
+#include "numerical_methods.h"
 
 namespace shrew
 {

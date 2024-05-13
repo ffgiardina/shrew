@@ -1,7 +1,8 @@
-#include <gtest/gtest.h>
-#include "../src/ProbabilityDistribution/normal_distribution.h"
-#include "../src/ProbabilityDistribution/compound_distribution.h"
+#include "compound_distribution.h"
+#include "normal_distribution.h"
 #include "../src/numerical_methods.h"
+
+#include <gtest/gtest.h>
 
 using namespace shrew::random_variable;
 
@@ -88,6 +89,7 @@ TEST_F(CompoundDistributionTestFixture, CDFOfStandardNormalRandomVariables)
   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
 
   auto generic_rv = normal_a * normal_b;
+  auto a = generic_rv.probability_distribution.Pdf(0.0);
   ASSERT_NEAR(generic_rv.probability_distribution.Cdf(0.0), 0.5, 1e-6);
   ASSERT_NEAR(generic_rv.probability_distribution.Cdf(INFINITY), 1.0, 1e-6);
 }

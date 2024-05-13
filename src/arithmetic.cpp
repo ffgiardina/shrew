@@ -1,9 +1,6 @@
-#include <math.h>
-#include "ProbabilityDistribution/compound_distribution.h"
-#include <functional>
-#include <cmath>
 #include "arithmetic.h"
-#include "numerical_methods.h"
+
+#include <math.h>
 
 namespace shrew
 {
@@ -28,7 +25,7 @@ namespace shrew
 
                     auto multiplication_integrand = [x, l_eval, r_eval](double y)
                     {
-                        return 1 / abs(y) * l_eval(y) * r_eval(x / y);
+                        return 1.0 / abs(y) * l_eval(y) * r_eval(x / y);
                     };
 
                     auto division_integrand = [x, l_eval, r_eval](double y)

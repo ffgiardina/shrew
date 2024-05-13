@@ -1,5 +1,6 @@
+#include "normal_distribution.h"
+
 #include <gtest/gtest.h>
-#include "../src/ProbabilityDistribution/normal_distribution.h"
 
 using namespace shrew::random_variable;
 

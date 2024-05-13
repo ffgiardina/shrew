@@ -1,9 +1,7 @@
 #pragma once
 
-#include "random_variable.h"
 #include <functional>
 #include <complex>
-#include <memory>
 
 namespace shrew
 {
