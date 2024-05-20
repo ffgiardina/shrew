@@ -7,7 +7,6 @@ namespace shrew
 {
     namespace random_variable
     {
-
         /// @brief Compound probability distribution created from two underlying distributions
         /// @tparam T
         /// @tparam U
@@ -226,5 +225,66 @@ namespace shrew
         {
             return CompoundDistribution(std::make_shared<T>(var_a.probability_distribution), std::make_shared<U>(var_b.probability_distribution), arithmetic::exponentiation);
         };
+
+        template <typename T>
+        RandomVariable<CompoundDistribution<T, double>> operator+(RandomVariable<T> const &var_a, double var_b)
+        {
+            return CompoundDistribution<T, double>(std::make_shared<T>(var_a.probability_distribution), var_b, arithmetic::addition);
+        };
+
+        template <typename U>
+        RandomVariable<CompoundDistribution<double, U>> operator+(double var_a, RandomVariable<U> const &var_b)
+        {
+            return CompoundDistribution<double, U>(var_a, std::make_shared<U>(var_b.probability_distribution), arithmetic::addition);
+        };
+
+        template <typename T>
+        RandomVariable<CompoundDistribution<T, double>> operator-(RandomVariable<T> const &var_a, double var_b)
+        {
+            return CompoundDistribution<T, double>(std::make_shared<T>(var_a.probability_distribution), var_b, arithmetic::subtraction);
+        };
+
+        template <typename U>
+        RandomVariable<CompoundDistribution<double, U>> operator-(double var_a, RandomVariable<U> const &var_b)
+        {
+            return CompoundDistribution<double, U>(var_a, std::make_shared<U>(var_b.probability_distribution), arithmetic::subtraction);
+        };
+
+        template <typename T>
+        RandomVariable<CompoundDistribution<T, double>> operator*(RandomVariable<T> const &var_a, double var_b)
+        {
+            return CompoundDistribution<T, double>(std::make_shared<T>(var_a.probability_distribution), var_b, arithmetic::multiplication);
+        };
+
+        template <typename U>
+        RandomVariable<CompoundDistribution<double, U>> operator*(double var_a, RandomVariable<U> const &var_b)
+        {
+            return CompoundDistribution<double, U>(var_a, std::make_shared<U>(var_b.probability_distribution), arithmetic::multiplication);
+        };
+
+        template <typename T>
+        RandomVariable<CompoundDistribution<T, double>> operator/(RandomVariable<T> const &var_a, double var_b)
+        {
+            return CompoundDistribution<T, double>(std::make_shared<T>(var_a.probability_distribution), var_b, arithmetic::division);
+        };
+
+        template <typename U>
+        RandomVariable<CompoundDistribution<double, U>> operator/(double var_a, RandomVariable<U> const &var_b)
+        {
+            return CompoundDistribution<double, U>(var_a, std::make_shared<U>(var_b.probability_distribution), arithmetic::division);
+        };
+
+        template <typename T>
+        RandomVariable<CompoundDistribution<T, double>> operator^(RandomVariable<T> const &var_a, double var_b)
+        {
+            return CompoundDistribution<T, double>(std::make_shared<T>(var_a.probability_distribution), var_b, arithmetic::exponentiation);
+        };
+
+        template <typename U>
+        RandomVariable<CompoundDistribution<double, U>> operator^(double var_a, RandomVariable<U> const &var_b)
+        {
+            return CompoundDistribution<double, U>(var_a, std::make_shared<U>(var_b.probability_distribution), arithmetic::exponentiation);
+        };
+
     } // namespace random_variable
 } // namespace shrew

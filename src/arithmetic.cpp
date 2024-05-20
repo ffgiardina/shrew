@@ -33,13 +33,6 @@ namespace shrew
                         return abs(y) * l_eval(x * y) * r_eval(y);
                     };
 
-                    auto exponentiation_integrand = [x, l_eval, r_eval](double y)
-                    {
-                        auto log_leval = [l_eval](double y)
-                        { return exp(y) * l_eval(exp(y)); };
-                        return 1 / abs(y) * log_leval(y) * r_eval(x / y);
-                    };
-
                     switch (operation)
                     {
                     case addition:
@@ -70,14 +63,15 @@ namespace shrew
                     case division:
                         return 1 / (abs(l_eval) * pow(x, 2)) * r_eval(1 / (x * l_eval));
                     case exponentiation:
-                        if (l_eval < 0)
-                        {
-                            throw std::logic_error("Negative exponentiation not implemented");
+                        if (l_eval < 0) {
+                            throw std::logic_error("Negative base for random variable exponentiation");
                         }
-                        else
-                        {
-                            return abs(1 / (x * log(abs(l_eval)))) * r_eval(log(abs(x)) / log(abs(l_eval)));
-                        };
+                        else if (x < 0) {
+                            throw std::logic_error("Pdf of base with random variable exponent not defined for negative values");
+                        }
+                        else {
+                            return abs(1 / (x * log(l_eval))) * r_eval(log(x) / log(l_eval));
+                        }
                     };
 
                     return 0.0;
@@ -96,7 +90,17 @@ namespace shrew
                     case division:
                         return abs(r_eval) * l_eval(x * r_eval);
                     case exponentiation:
-                        throw std::logic_error("Negative exponentiation not implemented");
+                        if (int(r_eval) != r_eval){
+                            throw std::logic_error("Exponent must be an integer");
+                        }
+                        else if (int(r_eval) % 2 == 0 && x < 0) {
+                            throw std::logic_error("Pdf of random variable constructed with even exponent not defined for negative values");
+                        }
+                        else {
+                            int multiplier = (1.0 + int(abs(r_eval) + 1) % 2);
+                            int sign = (x >= 0) ? 1 : -1;
+                            return l_eval( sign * pow(abs(x), 1.0 / r_eval)) * abs(multiplier / r_eval * sign * pow(abs(x), 1.0 / r_eval - 1.0));
+                        }
                     };
 
                     return 0.0;

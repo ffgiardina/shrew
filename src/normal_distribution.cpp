@@ -76,31 +76,11 @@ namespace shrew
             return RandomVariable<NormalDistribution>(NormalDistribution(mu, sigma));
         };
 
-        RandomVariable<CompoundDistribution<double, NormalDistribution>> operator/(double var_a, RandomVariable<NormalDistribution> const &var_b)
-        {
-            return RandomVariable<CompoundDistribution<double, NormalDistribution>>(CompoundDistribution<double, NormalDistribution>(var_a, std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::division));
-        };
-
         RandomVariable<NormalDistribution> operator/(RandomVariable<NormalDistribution> const &var_a, double var_b)
         {
             double mu = var_a.probability_distribution.mu / var_b;
             double sigma = var_a.probability_distribution.sigma / var_b;
             return RandomVariable<NormalDistribution>(NormalDistribution(mu, sigma));
-        };
-
-        RandomVariable<CompoundDistribution<NormalDistribution, NormalDistribution>> operator*(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b)
-        {
-            return RandomVariable<CompoundDistribution<NormalDistribution, NormalDistribution>>(CompoundDistribution<NormalDistribution, NormalDistribution>(std::make_shared<NormalDistribution>(var_a.probability_distribution), std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::multiplication));
-        };
-
-        RandomVariable<CompoundDistribution<NormalDistribution, NormalDistribution>> operator/(RandomVariable<NormalDistribution> const &var_a, RandomVariable<NormalDistribution> const &var_b)
-        {
-            return RandomVariable<CompoundDistribution<NormalDistribution, NormalDistribution>>(CompoundDistribution<NormalDistribution, NormalDistribution>(std::make_shared<NormalDistribution>(var_a.probability_distribution), std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::division));
-        };
-
-        RandomVariable<CompoundDistribution<double, NormalDistribution>> operator^(double var_a, RandomVariable<NormalDistribution> const &var_b)
-        {
-            return RandomVariable<CompoundDistribution<double, NormalDistribution>>(CompoundDistribution<double, NormalDistribution>(var_a, std::make_shared<NormalDistribution>(var_b.probability_distribution), arithmetic::exponentiation));
         };
 
     } // namespace random_variable

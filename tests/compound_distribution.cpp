@@ -37,8 +37,26 @@ TEST_F(CompoundDistributionTestFixture, LeftConstantExponentiation)
 {
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
 
-  ASSERT_NEAR((2.0 ^ normal_a).probability_distribution.Pdf(1.0), 0.575, 1e-3);
+  ASSERT_NEAR((2.0 ^ normal_a).probability_distribution.Pdf(1.0), 1 / (log(2) * sqrt(2*M_PI)), 1e-15);
+  ASSERT_NEAR((3.0 ^ normal_a).probability_distribution.Pdf(1.0), 1 / (log(3) * sqrt(2*M_PI)), 1e-15);
+  ASSERT_THROW((2.0 ^ normal_a).probability_distribution.Pdf(-1.0), std::logic_error);
   ASSERT_THROW(((-2.0) ^ normal_a).probability_distribution.Pdf(1.0), std::logic_error);
+}
+
+TEST_F(CompoundDistributionTestFixture, RightConstantExponentiation)
+{
+  RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
+  RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
+
+  ASSERT_NEAR((normal_a ^ 2.0).probability_distribution.Pdf(1.0), 1.0/(sqrt(2.0*M_PI)) * exp(-1.0/2.0), 1e-15);
+  ASSERT_THROW((normal_a ^ 2.0).probability_distribution.Pdf(-1.0), std::logic_error);
+  ASSERT_NEAR((normal_a ^ 3.0).probability_distribution.Pdf(1.0), 1.0/(3.0 * sqrt(2.0*M_PI)) * exp(-1.0/2.0), 1e-15);
+  ASSERT_NEAR((normal_a ^ 3.0).probability_distribution.Pdf(-1.0), 1.0/(3.0 * sqrt(2.0*M_PI)) * exp(-1.0/2.0), 1e-15);
+  ASSERT_NEAR((normal_a ^ (-2.0)).probability_distribution.Pdf(1.0), 1.0 / sqrt(2 * M_PI * exp(1)), 1e-15);
+  ASSERT_THROW((normal_a ^ (-2.0)).probability_distribution.Pdf(-1.0), std::logic_error);
+  ASSERT_NEAR((normal_a ^ (-3.0)).probability_distribution.Pdf(1.0), 1.0 / (3.0 * sqrt(2 * M_PI * exp(1))), 1e-15);
+  ASSERT_NEAR((normal_a ^ (-3.0)).probability_distribution.Pdf(-1.0), 1.0 / (3.0 * sqrt(2 * M_PI * exp(1))), 1e-15);
+  ASSERT_THROW((normal_a ^ 0.3).probability_distribution.Pdf(1.0), std::logic_error);
 }
 
 TEST_F(CompoundDistributionTestFixture, AdditionOfTwoNormalRandomVariablesAsGenerics)
@@ -90,7 +108,7 @@ TEST_F(CompoundDistributionTestFixture, CDFOfStandardNormalRandomVariables)
   ASSERT_NEAR(generic_rv.probability_distribution.Cdf(INFINITY), 1.0, 1e-6);
 }
 
-TEST_F(CompoundDistributionTestFixture, DoubleComposition)
+TEST_F(CompoundDistributionTestFixture, CompoundOperations)
 {
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(-1.0, 1.0));
   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(-1.0, 1.0));
