@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../src/random_variable.h"
+#include "random_variable.h"
 #include "compound_distribution.h"
 
 namespace shrew

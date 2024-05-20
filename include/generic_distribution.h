@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../src/numerical_methods.h"
-#include "../src/random_variable.h"
+#include "random_variable.h"
 
 #include <functional>
 

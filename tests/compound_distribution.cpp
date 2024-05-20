@@ -4,13 +4,10 @@
 
 #include <gtest/gtest.h>
 
+#define M_PI 3.14159265358979323846 /* pi */
 using namespace shrew::random_variable;
 
-class CompoundDistributionTestFixture : public testing::Test
-{
-protected:
-  CompoundDistributionTestFixture() {}
-};
+class CompoundDistributionTestFixture : public testing::Test{};
 
 TEST_F(CompoundDistributionTestFixture, IntegrationVerification)
 {
@@ -89,7 +86,20 @@ TEST_F(CompoundDistributionTestFixture, CDFOfStandardNormalRandomVariables)
   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
 
   auto generic_rv = normal_a * normal_b;
-  auto a = generic_rv.probability_distribution.Pdf(0.0);
   ASSERT_NEAR(generic_rv.probability_distribution.Cdf(0.0), 0.5, 1e-6);
   ASSERT_NEAR(generic_rv.probability_distribution.Cdf(INFINITY), 1.0, 1e-6);
+}
+
+TEST_F(CompoundDistributionTestFixture, DoubleComposition)
+{
+  RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(-1.0, 1.0));
+  RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(-1.0, 1.0));
+  RandomVariable<NormalDistribution> normal_c = RandomVariable<NormalDistribution>(NormalDistribution(1.0, 1.0));
+  RandomVariable<NormalDistribution> normal_d = RandomVariable<NormalDistribution>(NormalDistribution(1.0, 1.0));
+  auto normal_ac = normal_a * normal_c;
+  auto normal_bd = normal_b * normal_d;
+  ASSERT_NEAR((normal_a + normal_b + normal_c + normal_d).probability_distribution.Pdf(0.0), 1 / sqrt(2*M_PI*4), 1e-15);
+  ASSERT_NEAR((2*normal_a + normal_c*2).probability_distribution.Pdf(0.0), 1 / sqrt(2*M_PI*8), 1e-15);
+  ASSERT_NEAR(((normal_a + normal_c)*(normal_b + normal_d)).probability_distribution.Pdf(0.0), (RandomVariable<NormalDistribution>(NormalDistribution(0.0, sqrt(2)))*RandomVariable<NormalDistribution>(NormalDistribution(0.0, sqrt(2)))).probability_distribution.Pdf(0.0), 1e-15);
+  ASSERT_NEAR((normal_a*normal_c + normal_b*normal_d).probability_distribution.Pdf(0.0), (normal_ac + normal_bd).probability_distribution.Pdf(0.0), 1e-15);
 }

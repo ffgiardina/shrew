@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../src/arithmetic.h"
-#include "../src/random_variable.h"
+#include "random_variable.h"
 
 namespace shrew
 {
