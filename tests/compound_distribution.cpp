@@ -24,6 +24,10 @@ TEST_F(CompoundDistributionTestFixture, MultiplicationOfTwoNormalRandomVariables
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(-1.0, 1.0));
   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(1.0, 1.0));
   ASSERT_NEAR((normal_a * normal_b).probability_distribution.Pdf(1.0), 0.0759651, 1e-8);
+
+  RandomVariable<NormalDistribution> normal_s1 = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
+  RandomVariable<NormalDistribution> normal_s2 = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
+  ASSERT_NEAR((normal_s1 * normal_s2).probability_distribution.Pdf(1.0), std::cyl_bessel_k(0, 1.0) / M_PI, 1e-15);
 }
 
 TEST_F(CompoundDistributionTestFixture, DivisionOfTwoNormalRandomVariablesResultsInCauchyDistribution)
