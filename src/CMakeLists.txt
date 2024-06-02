@@ -7,7 +7,7 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(boostmath)
 
-add_library(${PROJECT_NAME} STATIC numerical_methods.cpp arithmetic.cpp normal_distribution.cpp generic_distribution.cpp)
+add_library(${PROJECT_NAME} STATIC numerical_methods.cpp arithmetic.cpp logic_assertions.cpp normal_distribution.cpp generic_distribution.cpp)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC

@@ -36,7 +36,6 @@ TEST_F(NormalDistributionTestFixture, CharacteristicFunction)
 TEST_F(NormalDistributionTestFixture, RandomVariableAddition)
 {
   auto grv_a = RandomVariable<NormalDistribution>(NormalDistribution(3.0, 1.0));
-  ASSERT_NEAR((grv + grv).probability_distribution.Pdf(0), 1 / sqrt(2) * 0.3989422804014337, 1e-15);
   ASSERT_NEAR((grv_a + grv).probability_distribution.Pdf(0), 0.029732572305907347, 1e-15);
   ASSERT_NEAR((grv + grv_a).probability_distribution.Pdf(0), 0.029732572305907347, 1e-15);
 }
@@ -44,7 +43,6 @@ TEST_F(NormalDistributionTestFixture, RandomVariableAddition)
 TEST_F(NormalDistributionTestFixture, RandomVariableSubtraction)
 {
   auto grv_a = RandomVariable<NormalDistribution>(NormalDistribution(3.0, 1.0));
-  ASSERT_NEAR((grv - grv).probability_distribution.Pdf(0), 1 / sqrt(2) * 0.3989422804014337, 1e-15);
   ASSERT_NEAR((grv_a - grv).probability_distribution.Pdf(3.0), 1 / sqrt(2) * 0.3989422804014337, 1e-15);
   ASSERT_NEAR((grv - grv_a).probability_distribution.Pdf(-3.0), 1 / sqrt(2) * 0.3989422804014337, 1e-15);
 }

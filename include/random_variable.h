@@ -1,6 +1,7 @@
 #pragma once
 
 #include <complex>
+#include <tuple>
 
 namespace shrew
 {
@@ -12,16 +13,18 @@ namespace shrew
     {
     public:
       // Probability density function
-      virtual double Pdf(double x) = 0;
+      virtual double Pdf(double x) const = 0;
 
       // Cumulative distribution function
-      virtual double Cdf(double x) = 0;
+      virtual double Cdf(double x) const = 0;
 
       // Moment generating function
-      virtual double Mgf(double t) = 0;
+      virtual double Mgf(double t) const = 0;
 
       // Characteristic function
-      virtual std::complex<double> Cf(double t) = 0;
+      virtual std::complex<double> Cf(double t) const = 0;
+
+      virtual std::tuple<const ProbabilityDistribution*, const ProbabilityDistribution*> get_operands() const { return {0, 0};};
     };
 
     /// @brief Base class of a random variable

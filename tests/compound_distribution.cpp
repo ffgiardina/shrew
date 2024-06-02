@@ -19,6 +19,16 @@ TEST_F(CompoundDistributionTestFixture, IntegrationVerification)
   ASSERT_NEAR(res, 1.0, 1e-15);
 }
 
+TEST_F(CompoundDistributionTestFixture, MultiplicationOfSelfReferencingNormalRandomVariables)
+{
+  RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
+  RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
+  RandomVariable<NormalDistribution> normal_c = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
+  ASSERT_THROW((normal_a * normal_a).probability_distribution.Pdf(0.0), std::logic_error);
+  ASSERT_THROW((normal_a + 2 + normal_a).probability_distribution.Pdf(0.0), std::logic_error);
+  ASSERT_THROW((normal_a + 2 + normal_b * normal_c - 3 * 5 * normal_a).probability_distribution.Pdf(0.0), std::logic_error);
+}
+
 TEST_F(CompoundDistributionTestFixture, MultiplicationOfTwoNormalRandomVariables)
 {
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(-1.0, 1.0));
@@ -37,7 +47,7 @@ TEST_F(CompoundDistributionTestFixture, MultiplicationOfThreeNormalRandomVariabl
   RandomVariable<NormalDistribution> normal_c = RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
 
   double meijer_g = 1.362710108013438627;
-  ASSERT_NEAR((normal_a * normal_b * normal_c).probability_distribution.Pdf(1.0), meijer_g / (2 * sqrt(2) * pow(M_PI, 1.5)), 1e-15);
+  ASSERT_NEAR(( normal_a * normal_b * normal_c).probability_distribution.Pdf(1.0), meijer_g / (2 * sqrt(2) * pow(M_PI, 1.5)), 1e-15);
 }
 
 TEST_F(CompoundDistributionTestFixture, DivisionOfTwoNormalRandomVariablesResultsInCauchyDistribution)
@@ -78,8 +88,8 @@ TEST_F(CompoundDistributionTestFixture, AdditionOfTwoNormalRandomVariablesAsGene
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(1.0, sqrt(2.0)));
   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(-1.0, sqrt(2.0)));
 
-  CompoundDistribution g_dist_a = CompoundDistribution(std::make_shared<NormalDistribution>(NormalDistribution(1.0, 1.0)), std::make_shared<NormalDistribution>(NormalDistribution(0.0, 1.0)), arithmetic::Operation::addition);
-  CompoundDistribution g_dist_b = CompoundDistribution(std::make_shared<NormalDistribution>(NormalDistribution(-1.0, 1.0)), std::make_shared<NormalDistribution>(NormalDistribution(0.0, 1.0)), arithmetic::Operation::addition);
+  CompoundDistribution g_dist_a = CompoundDistribution(new NormalDistribution(1.0, 1.0), new NormalDistribution(0.0, 1.0), arithmetic::Operation::addition);
+  CompoundDistribution g_dist_b = CompoundDistribution(new NormalDistribution(-1.0, 1.0), new NormalDistribution(0.0, 1.0), arithmetic::Operation::addition);
 
   using GNN = CompoundDistribution<NormalDistribution, NormalDistribution>;
   RandomVariable<GNN> gen_a = RandomVariable<GNN>(g_dist_a);
@@ -93,8 +103,8 @@ TEST_F(CompoundDistributionTestFixture, SubtractionOfTwoNormalRandomVariablesAsG
   RandomVariable<NormalDistribution> normal_a = RandomVariable<NormalDistribution>(NormalDistribution(1.0, sqrt(2.0)));
   RandomVariable<NormalDistribution> normal_b = RandomVariable<NormalDistribution>(NormalDistribution(-1.0, sqrt(2.0)));
 
-  CompoundDistribution g_dist_a = CompoundDistribution(std::make_shared<NormalDistribution>(NormalDistribution(1.0, 1.0)), std::make_shared<NormalDistribution>(NormalDistribution(0.0, 1.0)), arithmetic::Operation::addition);
-  CompoundDistribution g_dist_b = CompoundDistribution(std::make_shared<NormalDistribution>(NormalDistribution(-1.0, 1.0)), std::make_shared<NormalDistribution>(NormalDistribution(0.0, 1.0)), arithmetic::Operation::addition);
+  CompoundDistribution g_dist_a = CompoundDistribution(new NormalDistribution(1.0, 1.0), new NormalDistribution(0.0, 1.0), arithmetic::Operation::addition);
+  CompoundDistribution g_dist_b = CompoundDistribution(new NormalDistribution(-1.0, 1.0), new NormalDistribution(0.0, 1.0), arithmetic::Operation::addition);
 
   using GNN = CompoundDistribution<NormalDistribution, NormalDistribution>;
   RandomVariable<GNN> gen_a = RandomVariable<GNN>(g_dist_a);
