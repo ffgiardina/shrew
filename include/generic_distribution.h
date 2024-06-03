@@ -1,38 +1,42 @@
 #pragma once
 
+#include <functional>
+
 #include "../src/numerical_methods.h"
 #include "random_variable.h"
 
-#include <functional>
+namespace shrew {
+namespace random_variable {
 
-namespace shrew
-{
-  namespace random_variable
-  {
+/// @brief Generic probability distribution
+/// User can provide a custom probability density function. No checks are being
+/// performed and it is assumed the pdf is a valid probability density function.
+class GenericDistribution : public ProbabilityDistribution {
+ public:
+  /// Point-wise probability density function
+  virtual double Pdf(double x) const override;
 
-    /// @brief Generic probability distribution
-    class GenericDistribution : public ProbabilityDistribution
-    {
-    public:
-      // Probability density function
-      virtual double Pdf(double x) const override;
+  /// Point-wise cumulative distribution function
+  virtual double Cdf(double x) const override;
 
-      // Cumulative distribution function
-      virtual double Cdf(double x) const override;
+  /// Point-wise moment generating function
+  virtual double Mgf(double x) const override;
 
-      // Moment generating function
-      virtual double Mgf(double x) const override;
+  /// Point-wise characteristic function
+  virtual std::complex<double> Cf(double x) const override;
 
-      // Characteristic function
-      virtual std::complex<double> Cf(double x) const override;
+  /// Constructs a generic distribution with a user-provided probability density
+  /// function
+  GenericDistribution(std::function<double(double)> pdf) : pdf(pdf){};
+  GenericDistribution(){};
 
-      std::function<double(double)> pdf;
+ private:
+  /// User-provided probability density function
+  std::function<double(double)> pdf;
 
-      static const numerical_methods::Integrator &generic_integrator;
+  /// Integrator used for the cumulative distribution function
+  static const numerical_methods::Integrator &generic_integrator;
+};
 
-      GenericDistribution(std::function<double(double)> pdf) : pdf(pdf){};
-      GenericDistribution(){};
-    };
-
-  } // namespace random_variable
-} // namespace shrew
+}  // namespace random_variable
+}  // namespace shrew
