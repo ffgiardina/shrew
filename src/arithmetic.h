@@ -29,7 +29,6 @@ double right_const_operation(double x, Operation operation,
                              std::function<double(double)> l_eval,
                              double r_eval);
 }  // namespace evaluate_pdf
-
 }  // namespace arithmetic
 }  // namespace random_variable
 }  // namespace shrew

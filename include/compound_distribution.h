@@ -5,6 +5,7 @@
 
 #include "../src/arithmetic.h"
 #include "../src/logic_assertions.h"
+#include "delta_distribution.h"
 #include "random_variable.h"
 
 namespace shrew {
@@ -12,15 +13,16 @@ namespace random_variable {
 
 template <typename T>
 using RV = RandomVariable<T>;
+using PD = ProbabilityDistribution;
 
-/// @brief Compound probability distribution created from two underlying
-/// distributions.
+/// @brief Compound probability distribution created from a binary operation
+/// with two random variables.
 /// @tparam T
 ///  The type of the left operand.
 /// @tparam U
 ///  The type of the right operand.
 template <typename T, typename U>
-class CompoundDistribution : public ProbabilityDistribution {
+class CompoundDistribution : public PD {
  public:
   /// Point-wise probability density function
   virtual double Pdf(double x) const override;
@@ -40,7 +42,7 @@ class CompoundDistribution : public ProbabilityDistribution {
   /// The left operand of which the distribution is composed.
   T const *l_operand;
 
-  /// The left operand of which the distribution is composed.
+  /// The right operand of which the distribution is composed.
   U const *r_operand;
 
   /// The operation between the left and right operand
@@ -52,11 +54,9 @@ class CompoundDistribution : public ProbabilityDistribution {
   /// Integrator used for the compound CDF expression
   static const numerical_methods::Integrator &cdf_integrator;
 
-  /// Gets left and right operands if they are of type ProbabilityDistribution,
+  /// Gets left and right operands if they are of type PD,
   /// otherwise returns null pointer.
-  virtual std::tuple<const ProbabilityDistribution *,
-                     const ProbabilityDistribution *>
-  get_pd_operands() const override;
+  virtual std::tuple<const PD *, const PD *> get_pd_operands() const override;
 
   /// Constructs a compound distribution. Throws an error if repeating random
   /// variables are detected in the binary operation tree, as correlation is not
@@ -64,7 +64,7 @@ class CompoundDistribution : public ProbabilityDistribution {
   CompoundDistribution(T const *lptr, U const *rptr,
                        arithmetic::Operation operation)
       : l_operand(lptr), r_operand(rptr), operation(operation) {
-    std::unordered_set<const ProbabilityDistribution *> vars;
+    std::unordered_set<const PD *> vars;
 
     if (LogicAssertions::has_repeating_random_variable(this, vars))
       throw std::logic_error(
@@ -72,7 +72,7 @@ class CompoundDistribution : public ProbabilityDistribution {
           "Arithmetic with correlated random variables not implemented. Try "
           "using constant expressions instead, e.g. X+X -> 2*X.");
   };
-  
+
   friend class LogicAssertions;
 
   template <typename L, typename R>
@@ -97,7 +97,7 @@ class CompoundDistribution : public ProbabilityDistribution {
 /// @tparam T
 ///  The type of the left operand
 template <typename T>
-class CompoundDistribution<T, double> : public ProbabilityDistribution {
+class CompoundDistribution<T, double> : public PD {
  public:
   /// Point-wise probability density function
   virtual double Pdf(double x) const override;
@@ -121,9 +121,7 @@ class CompoundDistribution<T, double> : public ProbabilityDistribution {
   static const numerical_methods::Integrator &compound_integrator;
   static const numerical_methods::Integrator &cdf_integrator;
 
-  virtual std::tuple<const ProbabilityDistribution *,
-                     const ProbabilityDistribution *>
-  get_pd_operands() const override;
+  virtual std::tuple<const PD *, const PD *> get_pd_operands() const override;
 
   CompoundDistribution(T const *lptr, double rptr,
                        arithmetic::Operation operation)
@@ -153,7 +151,7 @@ class CompoundDistribution<T, double> : public ProbabilityDistribution {
 /// @tparam U
 ///  The type of the right operand
 template <typename U>
-class CompoundDistribution<double, U> : public ProbabilityDistribution {
+class CompoundDistribution<double, U> : public PD {
  public:
   /// Point-wise probability density function
   virtual double Pdf(double x) const override;
@@ -177,9 +175,7 @@ class CompoundDistribution<double, U> : public ProbabilityDistribution {
   static const numerical_methods::Integrator &compound_integrator;
   static const numerical_methods::Integrator &cdf_integrator;
 
-  virtual std::tuple<const ProbabilityDistribution *,
-                     const ProbabilityDistribution *>
-  get_pd_operands() const override;
+  virtual std::tuple<const PD *, const PD *> get_pd_operands() const override;
 
   CompoundDistribution(double lptr, U const *rptr,
                        arithmetic::Operation operation)
@@ -204,20 +200,20 @@ class CompoundDistribution<double, U> : public ProbabilityDistribution {
 };
 
 template <typename T, typename U>
-std::tuple<const ProbabilityDistribution *, const ProbabilityDistribution *>
-CompoundDistribution<T, U>::get_pd_operands() const {
+std::tuple<const PD *, const PD *> CompoundDistribution<T, U>::get_pd_operands()
+    const {
   return std::make_tuple(l_operand, r_operand);
 };
 
 template <typename U>
-std::tuple<const ProbabilityDistribution *, const ProbabilityDistribution *>
+std::tuple<const PD *, const PD *>
 CompoundDistribution<double, U>::get_pd_operands() const {
   std::tuple<const U *, const U *> tup(0, r_operand);
   return tup;
 };
 
 template <typename T>
-std::tuple<const ProbabilityDistribution *, const ProbabilityDistribution *>
+std::tuple<const PD *, const PD *>
 CompoundDistribution<T, double>::get_pd_operands() const {
   std::tuple<const T *, const T *> tup(l_operand, 0);
   return tup;
@@ -255,9 +251,9 @@ const numerical_methods::Integrator
 
 template <typename T, typename U>
 double CompoundDistribution<T, U>::Pdf(double x) const {
-  return arithmetic::evaluate_pdf::random_variable_operation(
-      x, operation, [this](double t) { return l_operand->Pdf(t); },
-      [this](double t) { return r_operand->Pdf(t); }, compound_integrator);
+    return arithmetic::evaluate_pdf::random_variable_operation(
+        x, operation, [this](double t) { return l_operand->Pdf(t); },
+        [this](double t) { return r_operand->Pdf(t); }, compound_integrator);
 };
 
 template <typename T>

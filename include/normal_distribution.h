@@ -10,7 +10,7 @@ namespace random_variable {
 template <typename T>
 using RV = RandomVariable<T>;
 
-/// @brief Normal (or Gaussian) probability distribution
+/// @brief Normal (or Gaussian) probability distribution class
 class NormalDistribution : public ProbabilityDistribution {
  public:
   /// Point-wise probability density function
@@ -57,7 +57,7 @@ class NormalDistribution : public ProbabilityDistribution {
   };
 
   friend class LogicAssertions;
-  
+
   friend RV<NormalDistribution> operator+(RV<NormalDistribution> const &var_a,
                                           RV<NormalDistribution> const &var_b);
   friend RV<NormalDistribution> operator-(RV<NormalDistribution> const &var_a,
