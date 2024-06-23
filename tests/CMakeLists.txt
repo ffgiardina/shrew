@@ -11,7 +11,7 @@ FetchContent_MakeAvailable(
 
 enable_testing()
 
-add_executable(shrew_tests normal_distribution.cpp compound_distribution.cpp generic_distribution.cpp)
+add_executable(shrew_tests normal_distribution.cpp compound_distribution.cpp generic_distribution.cpp multivariate_normal.cpp)
 target_link_libraries(
   shrew_tests
   GTest::gtest_main
