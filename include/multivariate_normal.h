@@ -14,19 +14,22 @@ class MultivariateNormal : public RandomVector<n> {
   virtual RandomVector<n> * marginal(int marginalized_indices[]) const override;
   virtual RandomVector<n> * conditional(int conditioned_indices[], char _operator, double value[]) const override;
 
-  Eigen::Matrix<double, n, n> K;
-  Eigen::Matrix<double, n, 1> mu;
-  double det_K;
-
   MultivariateNormal(Eigen::Matrix<double, n, 1> mu, Eigen::Matrix<double, n, n> K) : K(K), mu(mu) 
     {
       det_K = K.determinant();
+      K_inv = K.inverse();
     };
+
+ private:
+  const Eigen::Matrix<double, n, n> K;
+  const Eigen::Matrix<double, n, 1> mu;
+  double det_K;
+  Eigen::Matrix<double, n, n> K_inv;
 };
 
 template<int n>
 double MultivariateNormal<n>::joint_pdf(Eigen::Matrix<double, n, 1> x) const {
-  return pow(2 * M_PI, -n/2.0) * sqrt(det_K) * exp(-0.5 * (x - mu).transpose() * K * (x - mu));
+  return pow(2 * M_PI, -n/2.0) / sqrt(det_K) * exp(-0.5 * (x - mu).transpose() * K_inv * (x - mu));
 }
 
 template<int n>
