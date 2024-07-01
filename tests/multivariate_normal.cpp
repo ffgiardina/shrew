@@ -53,3 +53,19 @@ TEST_F(MultivariateNormalTestFixture, ConditionalNormalWithEqualityTest) {
   ASSERT_NEAR(conditional.K(0, 1), 0.857286432160804, 1e-14);
   ASSERT_NEAR(conditional.K(1, 1), 2.80603015075377, 1e-14);
 }
+
+TEST_F(MultivariateNormalTestFixture, ConditionalNormalWithTupleIndexingTest) {
+  auto mu = Eigen::Matrix<double, 4, 1> {1, 2, 3, 4};
+  auto K = Eigen::Matrix<double, 4, 4> {{4.0, 1.0, 0.5, 0.2}, {1.0, 3.0, 0.3, 0.4}, {0.5, 0.3, 2.0, 0.1}, {0.2, 0.4, 0.1, 1.0}};
+  auto conditional = getConditional<4,2>(MultivariateNormal<4>(mu, K), std::tuple<int, int>{ 2, 3 }, '=', Eigen::Matrix<double, 2, 1>{ 5.0, 6.0 });
+
+  ASSERT_NEAR(conditional.mu(0), 1.83417085427136, 1e-14);
+  ASSERT_NEAR(conditional.mu(1), 3.03517587939699, 1e-14);
+  ASSERT_NEAR(conditional.K(0, 0), 3.84422110552764, 1e-14);
+  ASSERT_NEAR(conditional.K(1, 0), 0.857286432160804, 1e-14);
+  ASSERT_NEAR(conditional.K(0, 1), 0.857286432160804, 1e-14);
+  ASSERT_NEAR(conditional.K(1, 1), 2.80603015075377, 1e-14);
+  
+  auto lbda = [mu, K]() { return getConditional<4,3>(MultivariateNormal<4>(mu, K), std::tuple<int, int>{ 4, 3 }, '=', Eigen::Matrix<double, 1, 1>{ 5.0 }); };
+  ASSERT_ANY_THROW(lbda());
+}

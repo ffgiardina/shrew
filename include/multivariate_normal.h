@@ -45,7 +45,7 @@ namespace shrew
     }
 
     template <int n, int m>
-    MultivariateNormal<m> getConditional(MultivariateNormal<n> random_vector, std::vector<int> conditional_indices, char _operator, Eigen::Matrix<double, m, 1> value)
+    MultivariateNormal<m> getConditional(MultivariateNormal<n> random_vector, std::vector<int> conditional_indices, char _operator, Eigen::Matrix<double, n - m, 1> value)
     {
       std::vector<int> non_conditional_indices(n - conditional_indices.size());
       for (int i = 0, k = 0; i < n - conditional_indices.size(); ++i)
@@ -75,5 +75,15 @@ namespace shrew
       return MultivariateNormal<m>(mu_conditioned, K_conditioned);
     }
 
+    template <int n, int m>
+    MultivariateNormal<m> getConditional(MultivariateNormal<n> random_vector, std::tuple<int, int> conditional_index_range, char _operator, Eigen::Matrix<double, n - m, 1> value)
+    {
+      auto delta = std::get<1>(conditional_index_range) - std::get<0>(conditional_index_range) + 1;
+      if (delta <= 0)
+        throw std::logic_error("Error: Start index greater than end index for conditional range.");
+      std::vector<int> conditional_indices(std::max(0, delta));
+      std::iota (std::begin(conditional_indices), std::end(conditional_indices), std::get<0>(conditional_index_range));
+      return getConditional<n, m>(random_vector, conditional_indices, _operator, value);
+    }
   } // namespace random_variable
 } // namespace shrew
