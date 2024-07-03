@@ -2,7 +2,7 @@
 
 #include "random_vector.h"
 
-#include <iostream>
+#include <vector>
 #include <numeric>
 
 namespace shrew
@@ -82,7 +82,7 @@ namespace shrew
       if (delta <= 0)
         throw std::logic_error("Error: Start index greater than end index for conditional range.");
       std::vector<int> conditional_indices(std::max(0, delta));
-      std::iota (std::begin(conditional_indices), std::end(conditional_indices), std::get<0>(conditional_index_range));
+      std::iota(std::begin(conditional_indices), std::end(conditional_indices), std::get<0>(conditional_index_range));
       return getConditional<n, m>(random_vector, conditional_indices, _operator, value);
     }
   } // namespace random_variable
