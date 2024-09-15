@@ -3,8 +3,8 @@
 #include <functional>
 #include <memory>
 
-#include "numerical_methods.h"
-#include "random_variable.h"
+#include "shrew/numerical_methods.hpp"
+#include "shrew/random_variable.hpp"
 
 namespace shrew
 {

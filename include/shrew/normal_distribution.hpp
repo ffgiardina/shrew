@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../src/logic_assertions.h"
-#include "compound_distribution.h"
-#include "random_variable.h"
+#include <shrew/logic_assertions.hpp>
+#include "shrew/compound_distribution.hpp"
+#include "shrew/random_variable.hpp"
 
 namespace shrew
 {

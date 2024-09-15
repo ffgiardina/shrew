@@ -1,4 +1,4 @@
-#include "arithmetic.h"
+#include "shrew/arithmetic.hpp"
 
 #include <math.h>
 

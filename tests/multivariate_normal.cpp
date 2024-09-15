@@ -1,4 +1,4 @@
-#include "multivariate_normal.h"
+#include "shrew/multivariate_normal.hpp"
 
 #include <iostream>
 #include <gtest/gtest.h>

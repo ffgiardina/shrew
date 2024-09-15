@@ -1,10 +1,10 @@
-#include "compound_distribution.h"
+#include "shrew/compound_distribution.hpp"
 
 #include <gtest/gtest.h>
 #include <math.h>
 
-#include "../src/numerical_methods.h"
-#include "normal_distribution.h"
+#include <shrew/numerical_methods.hpp>
+#include "shrew/normal_distribution.hpp"
 
 using namespace shrew::random_variable;
 

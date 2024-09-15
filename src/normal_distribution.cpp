@@ -1,6 +1,6 @@
-#include "normal_distribution.h"
+#include "shrew/normal_distribution.hpp"
 
-#include "arithmetic.h"
+#include "shrew/arithmetic.hpp"
 
 namespace shrew {
 namespace random_variable {

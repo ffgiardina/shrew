@@ -1,8 +1,8 @@
-#include "delta_distribution.h"
+#include "shrew/delta_distribution.hpp"
 
 #include <complex>
 
-#include "arithmetic.h"
+#include "shrew/arithmetic.hpp"
 
 namespace shrew
 {

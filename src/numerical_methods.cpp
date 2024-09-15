@@ -1,4 +1,4 @@
-#include "numerical_methods.h"
+#include "shrew/numerical_methods.hpp"
 
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 

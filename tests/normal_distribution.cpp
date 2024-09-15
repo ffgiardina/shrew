@@ -1,4 +1,4 @@
-#include "normal_distribution.h"
+#include "shrew/normal_distribution.hpp"
 
 #include <gtest/gtest.h>
 

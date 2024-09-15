@@ -1,5 +1,5 @@
-#include "logic_assertions.h"
-#include "random_variable.h"
+#include "shrew/logic_assertions.hpp"
+#include "shrew/random_variable.hpp"
 
 namespace shrew
 {

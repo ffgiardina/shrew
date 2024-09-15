@@ -3,7 +3,7 @@
 #include <tuple>
 #include <unordered_set>
 
-#include "random_variable.h"
+#include "shrew/random_variable.hpp"
 
 namespace shrew
 {

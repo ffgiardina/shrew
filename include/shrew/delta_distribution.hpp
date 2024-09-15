@@ -2,8 +2,7 @@
 
 #include <functional>
 
-#include "../src/numerical_methods.h"
-#include "random_variable.h"
+#include "shrew/random_variable.hpp"
 
 namespace shrew
 {

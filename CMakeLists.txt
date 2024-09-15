@@ -4,24 +4,79 @@ project(shrew)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(FetchContent)
-FetchContent_Declare(
-  boostmath
-  GIT_REPOSITORY https://github.com/boostorg/math.git
-  GIT_TAG boost-1.84.0
+list(APPEND CMAKE_PREFIX_PATH $ENV{SHREW_DEPS})
+
+find_package(Boost REQUIRED)
+find_package(Eigen3 REQUIRED)
+
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install" CACHE PATH "" FORCE)
+endif()
+message(
+    STATUS
+    "CMAKE_INSTALL_PREFIX set to ${CMAKE_INSTALL_PREFIX}\n"
 )
 
-include(FetchContent)
-FetchContent_Declare(
-  eigen
-  GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-  GIT_TAG 3.4.0
+add_library(${PROJECT_NAME} STATIC)
+
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        src/numerical_methods.cpp 
+        src/arithmetic.cpp 
+        src/logic_assertions.cpp 
+        src/normal_distribution.cpp 
+        src/generic_distribution.cpp)
+
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>        
 )
 
-FetchContent_MakeAvailable(boostmath)
-FetchContent_MakeAvailable(eigen)
+target_link_libraries(
+  shrew
+  Boost::boost
+  Eigen3::Eigen
+)
 
-include_directories(${eigen_SOURCE_DIR})
+set(public_headers
+    include/shrew/compound_distribution.hpp
+    include/shrew/delta_distribution.hpp
+    include/shrew/generic_distribution.hpp
+    include/shrew/multivariate_normal.hpp
+    include/shrew/normal_distribution.hpp
+    include/shrew/random_variable.hpp
+    include/shrew/random_vector.hpp
+    include/shrew/arithmetic.hpp
+    include/shrew/logic_assertions.hpp
+    include/shrew/numerical_methods.hpp)
 
-add_subdirectory("src")
+set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${public_headers}")
+set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "d")
+
+# Installation
+include(GNUInstallDirs) # Define GNU standard installation directories
+install(TARGETS ${PROJECT_NAME}
+    EXPORT "${PROJECT_NAME}Targets"
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(EXPORT "${PROJECT_NAME}Targets"
+    FILE "${PROJECT_NAME}Targets.cmake"
+    NAMESPACE Shrew::
+    DESTINATION cmake
+)
+
+include(CMakePackageConfigHelpers)
+
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    INSTALL_DESTINATION cmake
+)
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    DESTINATION cmake
+)
+
 add_subdirectory("tests")

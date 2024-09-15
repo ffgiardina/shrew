@@ -3,10 +3,10 @@
 #include <tuple>
 #include <unordered_set>
 
-#include "../src/arithmetic.h"
-#include "../src/logic_assertions.h"
-#include "delta_distribution.h"
-#include "random_variable.h"
+#include <shrew/arithmetic.hpp>
+#include <shrew/logic_assertions.hpp>
+#include "shrew/delta_distribution.hpp"
+#include "shrew/random_variable.hpp"
 
 namespace shrew
 {

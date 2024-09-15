@@ -1,6 +1,6 @@
 #pragma once
 
-#include "random_vector.h"
+#include "shrew/random_vector.hpp"
 
 #include <vector>
 #include <numeric>

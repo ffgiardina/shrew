@@ -1,8 +1,8 @@
-#include "generic_distribution.h"
+#include "shrew/generic_distribution.hpp"
 
 #include <complex>
 
-#include "arithmetic.h"
+#include "shrew/arithmetic.hpp"
 
 namespace shrew
 {
