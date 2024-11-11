@@ -1,5 +1,6 @@
 #include "shrew/compound_distribution.hpp"
 
+#include <boost/math/special_functions/bessel.hpp>
 #include <gtest/gtest.h>
 #include <math.h>
 
@@ -7,6 +8,7 @@
 #include "shrew/normal_distribution.hpp"
 
 using namespace shrew::random_variable;
+using namespace boost::math;
 
 class CompoundDistributionTestFixture : public testing::Test
 {
@@ -57,7 +59,7 @@ TEST_F(CompoundDistributionTestFixture,
     RandomVariable<NormalDistribution> normal_s2 =
         RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
     ASSERT_NEAR((normal_s1 * normal_s2).probability_distribution.Pdf(1.0),
-                std::cyl_bessel_k(0, 1.0) / M_PI, 1e-15);
+                cyl_bessel_k(0, 1.0) / M_PI, 1e-15);
 }
 
 TEST_F(CompoundDistributionTestFixture,
@@ -68,9 +70,9 @@ TEST_F(CompoundDistributionTestFixture,
     RandomVariable<NormalDistribution> normal_b =
         RandomVariable<NormalDistribution>(NormalDistribution(0.0, 1.0));
     ASSERT_NEAR((2 + normal_a * normal_b).probability_distribution.Pdf(3.0),
-                std::cyl_bessel_k(0, 1.0) / M_PI, 1e-15);
+                cyl_bessel_k(0, 1.0) / M_PI, 1e-15);
     ASSERT_NEAR((normal_a * normal_b - 2.0).probability_distribution.Pdf(-1.0),
-                std::cyl_bessel_k(0, 1.0) / M_PI, 1e-15);
+                cyl_bessel_k(0, 1.0) / M_PI, 1e-15);
 }
 
 TEST_F(CompoundDistributionTestFixture,
