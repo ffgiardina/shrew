@@ -79,4 +79,5 @@ install(FILES
     DESTINATION cmake
 )
 
+enable_testing()
 add_subdirectory("tests")
