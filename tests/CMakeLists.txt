@@ -9,8 +9,6 @@ set(INSTALL_GTEST OFF)
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-enable_testing()
-
 add_executable(shrew_tests normal_distribution.cpp compound_distribution.cpp generic_distribution.cpp multivariate_normal.cpp)
 target_link_libraries(
   shrew_tests
