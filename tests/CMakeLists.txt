@@ -16,4 +16,6 @@ target_link_libraries(
   shrew
 )
 
+add_test(NAME SHREWTESTS COMMAND shrew_tests)
+
 include(GoogleTest)
