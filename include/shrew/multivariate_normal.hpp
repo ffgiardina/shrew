@@ -32,10 +32,18 @@ namespace shrew
       Eigen::Matrix<double, n, n> K_inv;
     };
 
+    template <>
+    double MultivariateNormal<1>::joint_pdf(Eigen::Matrix<double, 1, 1> x) const
+    {
+      auto exponent = -0.5 * (x - mu).transpose() * K_inv * (x - mu);
+      return pow(2 * M_PI, -1.0 / 2.0) / sqrt(det_K) * exp(exponent.value());
+    }
+
     template <int n>
     double MultivariateNormal<n>::joint_pdf(Eigen::Matrix<double, n, 1> x) const
     {
-      return pow(2 * M_PI, -n / 2.0) / sqrt(det_K) * exp(-0.5 * (x - mu).transpose() * K_inv * (x - mu));
+      auto exponent = -0.5 * (x - mu).transpose() * K_inv * (x - mu);
+      return pow(2 * M_PI, -n / 2.0) / sqrt(det_K) * exp(exponent);
     }
 
     template <int n, int m>

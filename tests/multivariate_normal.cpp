@@ -59,6 +59,17 @@ TEST_F(MultivariateNormalTestFixture, ConditionalNormalWithEqualityTest)
   ASSERT_NEAR(conditional.K(1, 1), 2.80603015075377, 1e-14);
 }
 
+TEST_F(MultivariateNormalTestFixture, ConditionalNormalWithEqualityTest1D)
+{
+  auto mu = Eigen::Matrix<double, 4, 1>{1, 2, 3, 4};
+  auto K = Eigen::Matrix<double, 4, 4>{{4.0, 1.0, 0.5, 0.2}, {1.0, 3.0, 0.3, 0.4}, {0.5, 0.3, 2.0, 0.1}, {0.2, 0.4, 0.1, 1.0}};
+
+  auto conditional = getConditional<4, 1>(MultivariateNormal<4>(mu, K), std::vector<int>{1, 2, 3}, '=', Eigen::Matrix<double, 3, 1>{5.0, 6.0, 7.0});
+
+  ASSERT_NEAR(conditional.mu(0), 2.6934097421203438, 1e-14);
+  ASSERT_NEAR(conditional.K(0, 0), 3.5823065902578799, 1e-14);
+}
+
 TEST_F(MultivariateNormalTestFixture, ConditionalNormalWithTupleIndexingTest)
 {
   auto mu = Eigen::Matrix<double, 4, 1>{1, 2, 3, 4};
