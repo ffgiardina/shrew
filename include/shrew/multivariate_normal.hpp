@@ -56,11 +56,11 @@ namespace shrew
     MultivariateNormal<m> getConditional(MultivariateNormal<n> random_vector, std::vector<int> conditional_indices, char _operator, Eigen::Matrix<double, n - m, 1> value)
     {
       std::vector<int> non_conditional_indices(n - conditional_indices.size());
-      for (int i = 0, k = 0; i < n - conditional_indices.size(); ++i)
+      for (int i = 0, k = 0; i < n; ++i)
         if (i == conditional_indices[k])
           k += 1;
         else
-          non_conditional_indices[i] = i;
+          non_conditional_indices[i-k] = i;
 
       Eigen::Matrix<double, m, 1> mu_conditioned;
       Eigen::Matrix<double, m, m> K_conditioned;
