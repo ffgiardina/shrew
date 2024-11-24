@@ -66,14 +66,19 @@ namespace shrew
       Eigen::Matrix<double, m, m> K_conditioned;
       if (_operator == '=')
       {
-        auto mu_1 = random_vector.mu(non_conditional_indices);
-        auto mu_2 = random_vector.mu(conditional_indices);
-        auto sigma_11 = random_vector.K(non_conditional_indices, non_conditional_indices);
-        auto sigma_12 = random_vector.K(non_conditional_indices, conditional_indices);
-        auto sigma_22_inv = random_vector.K(conditional_indices, conditional_indices).inverse();
+        Eigen::Matrix<double, m, 1> mu_1 = random_vector.mu(non_conditional_indices);
+        Eigen::Matrix<double, n - m, 1> mu_2 = random_vector.mu(conditional_indices);
+        Eigen::Matrix<double, m, m> sigma_11 = random_vector.K(non_conditional_indices, non_conditional_indices);
+        Eigen::Matrix<double, m, n - m>  sigma_12 = random_vector.K(non_conditional_indices, conditional_indices);
+        Eigen::Matrix<double, n - m, n - m> sigma_22 = random_vector.K(conditional_indices, conditional_indices);
 
-        mu_conditioned = mu_1 + sigma_12 * sigma_22_inv * (value - mu_2);
-        K_conditioned = sigma_11 - sigma_12 * sigma_22_inv * sigma_12.transpose();
+        Eigen::LLT<Eigen::Matrix<double, n-m, n-m>> cholesky_K(sigma_22);
+        Eigen::Matrix<double, n - m, n - m> L = cholesky_K.matrixL();
+        Eigen::Matrix<double, n - m, 1> alpha = L.transpose().fullPivHouseholderQr().solve(L.fullPivHouseholderQr().solve(value - mu_2));
+        Eigen::Matrix<double, n - m, m> v = L.fullPivHouseholderQr().solve(sigma_12.transpose());
+        
+        mu_conditioned = mu_1 + sigma_12 * alpha;
+        K_conditioned = sigma_11 - v.transpose() * v;
       }
       else
       {
