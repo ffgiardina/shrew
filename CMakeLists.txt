@@ -4,6 +4,10 @@ project(shrew)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if (MINGW)
+    add_compile_options(-Wa,-mbig-obj)
+endif()
+
 list(APPEND CMAKE_PREFIX_PATH $ENV{SHREW_DEPS})
 
 find_package(Boost REQUIRED)
