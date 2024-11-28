@@ -9,11 +9,10 @@ namespace shrew
 
     /// @brief Base class of a random vector
     /// @tparam n
-    template <int n>
     class RandomVector
     {
     public:
-      virtual double joint_pdf(Eigen::Matrix<double, n, 1> x) const = 0;
+      virtual double joint_pdf(Eigen::VectorXd x) const = 0;
     };
 
   } // namespace random_variable

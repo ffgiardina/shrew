@@ -4,10 +4,6 @@ project(shrew)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (MINGW)
-    add_compile_options(-Wa,-mbig-obj)
-endif()
-
 list(APPEND CMAKE_PREFIX_PATH $ENV{SHREW_DEPS})
 
 find_package(Boost REQUIRED)
@@ -29,7 +25,8 @@ target_sources(${PROJECT_NAME}
         src/arithmetic.cpp 
         src/logic_assertions.cpp 
         src/normal_distribution.cpp 
-        src/generic_distribution.cpp)
+        src/generic_distribution.cpp
+        src/multivariate_normal.cpp)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
