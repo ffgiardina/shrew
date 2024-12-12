@@ -23,7 +23,7 @@ namespace shrew
       int n = random_vector.mu.size();
       std::vector<int> non_conditional_indices(n - conditional_indices.size());
       for (int i = 0, k = 0; i < n; ++i)
-        if (i == conditional_indices[k])
+        if (k < conditional_indices.size() && i == conditional_indices[k])
           k += 1;
         else
           non_conditional_indices[i-k] = i;
