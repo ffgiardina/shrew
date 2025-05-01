@@ -8,6 +8,7 @@ list(APPEND CMAKE_PREFIX_PATH $ENV{SHREW_DEPS})
 
 find_package(Boost REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(pybind11 REQUIRED)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install" CACHE PATH "" FORCE)
@@ -55,6 +56,12 @@ set(public_headers
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${public_headers}")
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "d")
 
+pybind11_add_module(pyshrew
+    bindings/wrapper.cpp
+    bindings/bind_normal_distribution.cpp
+)
+target_link_libraries(pyshrew PRIVATE shrew)
+
 # Installation
 include(GNUInstallDirs) # Define GNU standard installation directories
 install(TARGETS ${PROJECT_NAME}
@@ -78,6 +85,21 @@ configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
 install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
     DESTINATION cmake
+)
+
+# Python pip-compatible structure installation
+install(TARGETS pyshrew
+    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew/pyshrew
+)
+
+# Install __init__.py so pip sees it as a package
+install(FILES bindings/__init__.py
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew/pyshrew
+)
+
+# Optional: Install other metadata
+install(FILES bindings/setup.py
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew
 )
 
 enable_testing()
