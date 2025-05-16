@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.25.0)
+cmake_policy(SET CMP0148 OLD) # Make sure provided python executable is used
 project(shrew)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -57,8 +58,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${public_headers
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "d")
 
 pybind11_add_module(pyshrew
-    bindings/wrapper.cpp
-    bindings/bind_normal_distribution.cpp
+    bindings/pyshrew_bind.cpp
+    bindings/bind_distributions.cpp
+    bindings/bind_random_variable.cpp
+    bindings/bind_random_vector.cpp
 )
 target_link_libraries(pyshrew PRIVATE shrew)
 
