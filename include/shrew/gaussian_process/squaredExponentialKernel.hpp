@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <Eigen/Dense>
 #include <unordered_set>

@@ -1,16 +1,13 @@
+#pragma once
+
 #include <vector>
 #include <Eigen/Dense>
 #include <unordered_set>
 #include "kernel.hpp"
+#include "maternKernel.hpp"
 
 namespace gaussian_process {
     namespace kernel {
-        enum MaternSmoothness {
-            NU_0_5,
-            NU_1_5,
-            NU_2_5
-        };
-
         class MaternNoise : public Kernel {
           private: 
             std::vector<double> hyperparameters; // {sigma_f, l, sigma_n1, sigma_n2}
