@@ -10,6 +10,7 @@ list(APPEND CMAKE_PREFIX_PATH $ENV{SHREW_DEPS})
 
 find_package(Boost REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(NLopt REQUIRED)
 find_package(pybind11 REQUIRED)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -29,7 +30,11 @@ target_sources(${PROJECT_NAME}
         src/logic_assertions.cpp 
         src/normal_distribution.cpp 
         src/generic_distribution.cpp
-        src/multivariate_normal.cpp)
+        src/multivariate_normal.cpp
+        src/gaussian_process/gaussian_process.cpp
+        src/gaussian_process/maternKernel.cpp
+        src/gaussian_process/maternKernelNoise.cpp
+        src/gaussian_process/squaredExponentialKernel.cpp)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
@@ -41,6 +46,7 @@ target_link_libraries(
   shrew
   Boost::boost
   Eigen3::Eigen
+  NLopt::nlopt
 )
 
 set(public_headers
@@ -53,7 +59,12 @@ set(public_headers
     include/shrew/random_vector.hpp
     include/shrew/arithmetic.hpp
     include/shrew/logic_assertions.hpp
-    include/shrew/numerical_methods.hpp)
+    include/shrew/numerical_methods.hpp
+    include/shrew/gaussian_process/gaussian_process.hpp
+    include/shrew/gaussian_process/kernel.hpp
+    include/shrew/gaussian_process/maternKernel.hpp
+    include/shrew/gaussian_process/maternKernelNoise.hpp
+    include/shrew/gaussian_process/squaredExponentialKernel.hpp)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${public_headers}")
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "d")
