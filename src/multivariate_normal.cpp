@@ -22,11 +22,15 @@ namespace shrew
     {
       int n = random_vector.mu.size();
       std::vector<int> non_conditional_indices(n - conditional_indices.size());
-      for (int i = 0, k = 0; i < n; ++i)
-        if (k < conditional_indices.size() && i == conditional_indices[k])
+      for (int i = 0, k = 0; i < n; ++i) {
+        auto c_index = conditional_indices[k];
+        if (c_index < 0 || c_index >= n)
+          throw std::out_of_range("Conditional index out of bounds");
+        if (k < conditional_indices.size() && i == c_index)
           k += 1;
         else
           non_conditional_indices[i-k] = i;
+      }
 
       Eigen::VectorXd mu_conditioned;
       Eigen::MatrixXd K_conditioned;
@@ -42,7 +46,7 @@ namespace shrew
         Eigen::MatrixXd L = cholesky_K.matrixL();
         Eigen::VectorXd alpha = L.transpose().fullPivHouseholderQr().solve(L.fullPivHouseholderQr().solve(value - mu_2));
         Eigen::MatrixXd v = L.fullPivHouseholderQr().solve(sigma_12.transpose());
-        
+
         mu_conditioned = mu_1 + sigma_12 * alpha;
         K_conditioned = sigma_11 - v.transpose() * v;
       }

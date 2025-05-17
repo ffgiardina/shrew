@@ -6,9 +6,10 @@ Currently featured:
 - Arithmetic of normal random variables (e.g. X * Y - Z)
 - Probability density and cumulative density of arithmetic expressions with lazy numerical evaluation if no exact solution exists
 - Conditionals and marginals of multivariate normal random vectors
+- Gaussian process model with hyperparameter optimization
 
 ## Requirements
-Shrew requires the `Eigen C++` and `Boost.Math` libraries. If these dependencies are not installed in the default paths, set the environment variable `SHREW_DEPS` to the root directory where they are located.
+Shrew requires the `Eigen C++`, `Boost.Math`, `NLopt`, and `pybind11` libraries. If these dependencies are not installed in the default paths, set the environment variable `SHREW_DEPS` to the root directory where they are located.
 
 ## Installation
 ### CMake
@@ -70,3 +71,53 @@ conditional_rvec = ps.get_conditional(rvec, indices, condition, values)
 print(f'Conditional mean: {conditional_rvec.mu}')
 print(f'Conditional variance: {conditional_rvec.K}')
 ```
+
+### Gaussian Process optimization
+```python
+import pyshrew as ps
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Generate synthetic data
+n_data, n_eval = 50, 100
+range_x = 10
+noise = 0.2
+
+x_eval = np.array([x * range_x / n_eval for x in range(0, n_eval)])
+x_data = np.array([x * range_x / n_data for x in range(0, n_data)])
+x = np.append(x_eval, x_data)
+y = np.array([np.sin(xi) + np.random.normal(0, noise) for xi in x_data])
+conditional_indices = [x for x in range(n_eval, n_eval+n_data)]
+
+# Initial hyperparameters: sigma_f, l, sigma_n1
+hp_ic = [0.5, 0.3, 0.5]
+
+# Lower and upper bounds for hyperparameters
+hp_lower_bounds = [0, 0, 0]
+hp_upper_bounds = [100, 100, 100]
+
+# Define kernel
+kernel = ps.SquaredExponential(
+    hp_ic, hp_lower_bounds, hp_upper_bounds, 
+    conditional_indices)
+
+# Create Gaussian process and optimize hyperparameters
+gp = ps.GaussianProcess(x, y, conditional_indices, kernel)
+print("Initial log marginal likelihood:", gp.log_marginal_likelihood())
+gp.optimize()
+
+# Get posterior distribution
+mu, stdv = gp.get_posterior()
+
+# Plot predictions
+ylow = [zp[0]-1.96*zp[1] for zp in zip(mu, stdv)]
+yhi = [zp[0]+1.96*zp[1] for zp in zip(mu, stdv)]
+
+plt.plot(x_eval, mu, label=r'GP Posterior Mean')
+plt.fill_between(x_eval, ylow, yhi, alpha=0.3, label=r'GP 95% Confidence')
+plt.plot(x_data, y, 'k.', label='Data')
+plt.legend()
+plt.title('Gaussian Process Regression for noisy sine function')
+plt.show()
+```
+![GP Optimization Output](images/gp_fit.png)

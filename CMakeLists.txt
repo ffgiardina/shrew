@@ -74,6 +74,7 @@ pybind11_add_module(pyshrew
     bindings/bind_distributions.cpp
     bindings/bind_random_variable.cpp
     bindings/bind_random_vector.cpp
+    bindings/bind_gaussian_process.cpp
 )
 target_link_libraries(pyshrew PRIVATE shrew)
 

@@ -102,7 +102,7 @@ namespace gaussian_process {
     }
 
     std::tuple<std::vector<double>, std::vector<double>> GaussianProcess::GetPosteriorGP(){
-        auto mu0 = Eigen::VectorXd::Zero(x.size(), 1);
+        auto mu0 = Eigen::VectorXd::Zero(x.size());
         Eigen::MatrixXd K = kernel->KernelFunc(x);
         MultivariateNormal grv = MultivariateNormal(mu0, K);
         MultivariateNormal cgrv = getConditional(grv, conditional_indices, '=', y);
