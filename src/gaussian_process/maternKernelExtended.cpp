@@ -1,32 +1,16 @@
-#include "shrew/gaussian_process/maternKernel.hpp"
+#include "shrew/gaussian_process/maternKernelExtended.hpp"
 
 namespace gaussian_process {
     namespace kernel {
-        double Matern::MaternEval(double r, double l) const {
-            switch (hyperparameters.nu) {
-                case MaternSmoothness::NU_0_5: return exp(-r / l);
-                case MaternSmoothness::NU_1_5: return (1.0 + sqrt(3) * r / l) * exp(- sqrt(3) * r / l);
-                case MaternSmoothness::NU_2_5: return (1.0 + sqrt(5) * r / l + 5.0 * pow(r, 2.0) / (3.0 * pow(l, 2.0) )) * exp(- sqrt(5) * r / l);
-                default: throw std::invalid_argument("Smoothness parameter value not supported");
-            }
-        }
-
-        double Matern::DerivativeMaternEval(double r, double l) const {
-            switch (hyperparameters.nu) {
-                case MaternSmoothness::NU_0_5: return r / pow(l, 2.0) * exp(-r/l);
-                case MaternSmoothness::NU_1_5: return (3 * exp(-(sqrt(3) * r)/l) * pow(r, 2.0))/ pow(l, 3.0);
-                case MaternSmoothness::NU_2_5: return ( 5.0 / 3.0 * pow(r, 2.0) / pow(l, 3.0) + sqrt(5) * 5.0 / 3.0 * pow(r, 3.0) / pow(l, 4.0) ) * exp(- sqrt(5) * r / l);
-                default: throw std::invalid_argument("Unknown smoothness parameter");
-            }
-        }
-
-        Eigen::MatrixXd Matern::KernelFunc(Eigen::VectorXd x) const {    
+        Eigen::MatrixXd MaternExtended::KernelFunc(Eigen::VectorXd x) const {    
             Eigen::MatrixXd K(x.size(), x.size());
             for (int i = 0; i < x.size(); i++){
                 for (int j = 0; j <= i; j++){
                     K(i, j) = pow(hyperparameters.signal_stdv, 2) * MaternEval(fabs(x(i) - x(j)), hyperparameters.lengthscale);
 
-                    if (i == j && conditional_indices.contains(i)) 
+                    if (i == j && ext_data_conditional_indices_to_noise.contains(i)) 
+                        K(i, j) += pow(ext_data_conditional_indices_to_noise.at(i), 2);
+                    else if (i == j && conditional_indices.contains(i)) 
                         K(i, j) += pow(hyperparameters.noise_stdv, 2);
                     else if(i != j)
                         K(j, i) = K(i, j);
@@ -35,13 +19,16 @@ namespace gaussian_process {
             return K;
         }
 
-        Eigen::MatrixXd Matern::DataKernelFunc(std::shared_ptr<Hyperparameters> hyperparams, Eigen::VectorXd x) const {
+        Eigen::MatrixXd MaternExtended::DataKernelFunc(std::shared_ptr<Hyperparameters> hyperparams, Eigen::VectorXd x) const {
             std::shared_ptr<MaternHyperparams> hyperparams_ = shrew::utils::cast_pointer<MaternHyperparams>(hyperparams, "SquaredExponential::DataKernelFunc()" );
             Eigen::MatrixXd K(x.size(), x.size());
             for (int i = 0; i < x.size(); i++){
                 for (int j = 0; j <= i; j++){
                     K(i, j) = pow(hyperparams_->signal_stdv, 2) * MaternEval(fabs(x(i) - x(j)), hyperparams_->lengthscale);
-                    if (i == j) 
+                    
+                    if (i == j && ext_data_conditional_indices_to_noise.contains(i)) 
+                        K(i, j) += pow(ext_data_conditional_indices_to_noise.at(i), 2);
+                    else if (i == j) 
                         K(i, j) += pow(hyperparams_->noise_stdv, 2);
                     else 
                         K(j, i) = K(i, j);
@@ -51,10 +38,10 @@ namespace gaussian_process {
             return K;
         }
 
-        std::shared_ptr<HyperparametersPartialDerivative> Matern::DataKernelDerivatives(std::shared_ptr<Hyperparameters> hyperparams, Eigen::VectorXd x) const {
+        std::shared_ptr<HyperparametersPartialDerivative> MaternExtended::DataKernelDerivatives(std::shared_ptr<Hyperparameters> hyperparams, Eigen::VectorXd x) const {
             std::shared_ptr<MaternHyperparams> hyperparams_ = shrew::utils::cast_pointer<MaternHyperparams>(hyperparams, "Matern::DataKernelDerivatives()" );
 
-            auto dK = MaternHyperparamsPartialDerivative(x.size());
+            auto dK = MaternExtendedHyperparamsPartialDerivative(x.size(), ext_data_conditional_indices_to_noise.size());
             for (int i = 0; i < x.size(); i++){
                 for (int j = 0; j <= i; j++){
                         dK.signal_stdv(i, j) = 2 * hyperparams_->signal_stdv * MaternEval(fabs(x(i) - x(j)), hyperparams_->lengthscale);
@@ -70,6 +57,18 @@ namespace gaussian_process {
                             dK.noise_stdv(i, j) += 2 * hyperparams_->noise_stdv;
                         else
                             dK.noise_stdv(j, i) = 0;
+
+
+                        int k = 0;
+                        for (auto & ext_idx : ext_data_conditional_indices_to_noise) {
+                            dK.ext_data_noise_stdv[k](i, j) = 0;
+                            if (i == j && ext_idx.first == i) {
+                                dK.ext_data_noise_stdv[k](i, j) += 2 * ext_idx.second;
+                            }
+                            else
+                                dK.ext_data_noise_stdv[k](j, i) = 0;
+                            k++;
+                        }
                 }
             }
 
