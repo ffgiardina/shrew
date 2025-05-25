@@ -35,8 +35,8 @@ namespace gaussian_process {
             HpOptimizationMeta hp_opt_meta;
 
             double LogMarginalLikelihood();
-            static double LogMarginalLikelihood(const std::shared_ptr<kernel::Hyperparameters> &params, Eigen::VectorXd &x_, Eigen::VectorXd &y_, kernel::Kernel *kernel_);
-            static double LogMarginalLikelihood(const std::shared_ptr<kernel::Hyperparameters> &params, std::shared_ptr<kernel::HyperparametersPartialDerivative>& gradient, Eigen::VectorXd &x_, Eigen::VectorXd &y_, kernel::Kernel *kernel_);
+            static double LogMarginalLikelihood(const std::vector<double> &params, Eigen::VectorXd &x_, Eigen::VectorXd &y_, kernel::Kernel *kernel_);
+            static double LogMarginalLikelihood(const std::vector<double> &params, std::vector<double>& gradient, Eigen::VectorXd &x_, Eigen::VectorXd &y_, kernel::Kernel *kernel_);
             
             void OptimizeHyperparameters(bool progress_output = true);
 

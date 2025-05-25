@@ -32,9 +32,9 @@ target_sources(${PROJECT_NAME}
         src/generic_distribution.cpp
         src/multivariate_normal.cpp
         src/gaussian_process/gaussian_process.cpp
-        src/gaussian_process/maternKernel.cpp
-        src/gaussian_process/maternKernelNoise.cpp
-        src/gaussian_process/squaredExponentialKernel.cpp)
+        src/gaussian_process/matern_kernel.cpp
+        src/gaussian_process/matern_kernel_extended.cpp
+        src/gaussian_process/squared_exponential_kernel.cpp)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
@@ -62,9 +62,9 @@ set(public_headers
     include/shrew/numerical_methods.hpp
     include/shrew/gaussian_process/gaussian_process.hpp
     include/shrew/gaussian_process/kernel.hpp
-    include/shrew/gaussian_process/maternKernel.hpp
-    include/shrew/gaussian_process/maternKernelNoise.hpp
-    include/shrew/gaussian_process/squaredExponentialKernel.hpp)
+    include/shrew/gaussian_process/matern_kernel.hpp
+    include/shrew/gaussian_process/matern_kernel_extended.hpp
+    include/shrew/gaussian_process/squared_exponential_kernel.hpp)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${public_headers}")
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "d")

@@ -6,7 +6,7 @@ using namespace shrew::random_vector;
 namespace gaussian_process {
     double GaussianProcess::LogMarginalLikelihood() {
         int m = y.size();
-        auto K = kernel->DataKernelFunc(kernel->GetHyperparameters(), x(conditional_indices));
+        auto K = kernel->OptimizationKernelFunc(kernel->GetOptimizationParams(), x(conditional_indices));
         Eigen::LLT<Eigen::MatrixXd> llt(K);
         Eigen::MatrixXd L = llt.matrixL();
         Eigen::VectorXd alpha = L.transpose().fullPivHouseholderQr().solve(L.fullPivHouseholderQr().solve(y));
@@ -20,7 +20,7 @@ namespace gaussian_process {
 
     double GaussianProcess::LogMarginalLikelihood(const std::vector<double> &params, Eigen::VectorXd &x_, Eigen::VectorXd &y_, kernel::Kernel *kernel_) {
         int m = y_.size();
-        auto K = kernel_->DataKernelFunc(params, x_);
+        auto K = kernel_->OptimizationKernelFunc(params, x_);
         Eigen::LLT<Eigen::MatrixXd> llt(K);
         Eigen::MatrixXd L = llt.matrixL();
         
@@ -35,7 +35,7 @@ namespace gaussian_process {
 
     double GaussianProcess::LogMarginalLikelihood(const std::vector<double> &params, std::vector<double> &gradient, Eigen::VectorXd &x_, Eigen::VectorXd &y_, kernel::Kernel *kernel_) {
         int m = y_.size();
-        auto K = kernel_->DataKernelFunc(params, x_);
+        auto K = kernel_->OptimizationKernelFunc(params, x_);
         Eigen::LLT<Eigen::MatrixXd> llt(K);
         Eigen::MatrixXd L = llt.matrixL();
         
@@ -48,7 +48,7 @@ namespace gaussian_process {
             log_trace += log(L(i, i));
         }
 
-        std::vector<Eigen::MatrixXd> dK = kernel_->DataKernelDerivatives(params, x_);
+        std::vector<Eigen::MatrixXd> dK = kernel_->OptimizationKernelDerivatives(params, x_);
         for (int i = 0; i < dK.size(); i++) {
             gradient[i] = 0.5 * ((alpha * alpha.transpose() - Kinv) * dK[i]).trace();
         }
@@ -83,18 +83,18 @@ namespace gaussian_process {
 
     void GaussianProcess::OptimizeHyperparameters(bool progress_output) {
         hp_opt_meta.progress_output = progress_output;
-        nlopt::opt opt(hp_opt_meta.algo, kernel->GetHyperparameters().size());
-        opt.set_lower_bounds(kernel->GetHpLowerBounds());
-        opt.set_upper_bounds(kernel->GetHpUpperBounds());
+        nlopt::opt opt(hp_opt_meta.algo, kernel->GetOptimizationParams().size());
+        opt.set_lower_bounds(kernel->GetOptLowerBounds());
+        opt.set_upper_bounds(kernel->GetOptUpperBounds());
         opt.set_ftol_rel(1e-6);
         opt.set_max_objective(lml_objective_func, &hp_opt_meta);
-        kernel->SetHyperparameters(opt.optimize(kernel->GetHyperparameters()));
+        kernel->ApplyParams(opt.optimize(kernel->GetOptimizationParams()));
 
         if (progress_output) {
             std::cout << "Optimization terminated @ ";
             std::cout << "iteration " << hp_opt_meta.iter << std::endl;
             std::cout << "Optimized Hyperparameters: ";
-            for (const auto& element : kernel->GetHyperparameters()) {
+            for (const auto& element : kernel->GetOptimizationParams()) {
                 std::cout << element << " ";
             }
             std::cout << "\nOptimized log maginal likelihood: " << LogMarginalLikelihood() << std::endl;

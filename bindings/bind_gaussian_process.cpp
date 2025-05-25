@@ -4,9 +4,9 @@
 #include <pybind11/numpy.h>
 #include "shrew/gaussian_process/gaussian_process.hpp"
 #include "shrew/gaussian_process/kernel.hpp"
-#include "shrew/gaussian_process/maternKernel.hpp"
-#include "shrew/gaussian_process/maternKernelNoise.hpp"
-#include "shrew/gaussian_process/squaredExponentialKernel.hpp"
+#include "shrew/gaussian_process/matern_kernel.hpp"
+#include "shrew/gaussian_process/matern_kernel_extended.hpp"
+#include "shrew/gaussian_process/squared_exponential_kernel.hpp"
 
 namespace py = pybind11;
 using namespace gaussian_process;
@@ -21,16 +21,29 @@ void bind_gaussian_process(py::module_ &m) {
 
     py::class_<Kernel>(m, "Kernel");
 
-    py::class_<MaternNoise, Kernel>(m, "MaternNoise")
-        .def(py::init<std::vector<double>, std::vector<double>, std::vector<double>, std::vector<int>, std::vector<int>, MaternSmoothness>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"), py::arg("conditional_indices_noise2"), py::arg("matern_smoothness"))
-        .def("get_hyperparameters", &MaternNoise::GetHyperparameters);
+    py::class_<Hyperparameters>(m, "Hyperparameters");
+
+    py::class_<SEHyperparams, Hyperparameters>(m, "SEHyperparams")
+        .def(py::init<double, double, double>(), py::arg("lengthscale"), py::arg("noise_stdv"), py::arg("signal_stdv"));
+
+    py::class_<MaternHyperparams, Hyperparameters>(m, "MaternHyperparams")
+        .def(py::init<double, double, double, MaternSmoothness>(), 
+             py::arg("lengthscale"), py::arg("noise_stdv"), py::arg("signal_stdv"), py::arg("nu"));
+
+    py::class_<MaternExtendedHyperparams, MaternHyperparams>(m, "MaternExtendedHyperparams")
+        .def(py::init<double, double, double, MaternSmoothness, std::vector<double>>(), 
+             py::arg("lengthscale"), py::arg("noise_stdv"), py::arg("signal_stdv"), py::arg("nu"), py::arg("ext_data_noise_stdv"));
+
+    py::class_<MaternExtended, Kernel>(m, "MaternExtended")
+        .def(py::init<std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::vector<int>, std::vector<int>>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"), py::arg("conditional_indices_noise2"))
+        .def("get_hyperparameters", &MaternExtended::GetHyperparameters);
 
     py::class_<Matern, Kernel>(m, "Matern")
-        .def(py::init<std::vector<double>, std::vector<double>, std::vector<double>, std::vector<int>, MaternSmoothness>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"), py::arg("matern_smoothness"))
+        .def(py::init<std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::vector<int>>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"))
         .def("get_hyperparameters", &Matern::GetHyperparameters);
 
     py::class_<SquaredExponential, Kernel>(m, "SquaredExponential")
-        .def(py::init<std::vector<double>, std::vector<double>, std::vector<double>, std::vector<int>>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"))
+        .def(py::init<std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::vector<int>>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"))
         .def("get_hyperparameters", &SquaredExponential::GetHyperparameters);
 
     py::enum_<MaternSmoothness>(m, "MaternSmoothness")
