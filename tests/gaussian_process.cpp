@@ -24,8 +24,8 @@ protected:
     const double range_x = 10.0;
     const double noise_std = 0.2;
     const double freq = 1.0;
-    const std::vector<double> ext_data_noise_stdv = {0.1, 0.2, 0.3, 0.4, 0.5};
-    const std::vector<int> ext_data_conditional_indices = {0, 1, 2, 3, 4};
+    const std::vector<double> ext_data_noise_stdv = {0.1, 0.2, 0.3, 0.6};
+    const std::vector<int> ext_data_conditional_indices = {5, 12, 15, 20};
 
     void SetUp() override {
         generateNoisySinusoid();
@@ -81,9 +81,24 @@ TEST_F(GaussianProcessTestFixture, MaternKernelOptimizationTest) {
     EXPECT_GT(gp.LogMarginalLikelihood(), init_log_marginal_likelihood) << "Log marginal likelihood did not improve after optimization";
 }
 
-TEST_F(GaussianProcessTestFixture, MaternKernelExtendedOptimizationTest) {
+TEST_F(GaussianProcessTestFixture, MaternKernelExtendedLogicTest) {
     const std::vector<double> ext_data_noise_stdv_lb = {0.01, 0.01, 0.01, 0.01, 0.01};
     const std::vector<double> ext_data_noise_stdv_ub = {1000.0, 1000.0, 1000.0, 1000.0, 1000.0};
+
+    auto hyperparams = std::make_shared<kernel::MaternExtendedHyperparams>(kernel::MaternExtendedHyperparams(0.5, 0.3, 0.5, kernel::MaternSmoothness::NU_1_5, ext_data_noise_stdv));
+    auto hyperparams_lower = std::make_shared<kernel::MaternExtendedHyperparams>(kernel::MaternExtendedHyperparams(0.01, 0.01, 0.01, kernel::MaternSmoothness::NU_1_5, ext_data_noise_stdv_lb));
+    auto hyperparams_upper = std::make_shared<kernel::MaternExtendedHyperparams>(kernel::MaternExtendedHyperparams(1000.0, 1000.0, 1000.0, kernel::MaternSmoothness::NU_1_5, ext_data_noise_stdv_ub));
+
+    gaussian_process::kernel::MaternExtended kernel(hyperparams, hyperparams_lower, hyperparams_upper, conditional_indices, ext_data_conditional_indices);
+    
+    auto params_to_idx = kernel.GetOptParamsToIdx();
+    auto ext_data_conditional_index_map = kernel.GetExtDataConditionalIndexMap();
+
+}
+
+TEST_F(GaussianProcessTestFixture, MaternKernelExtendedOptimizationTest) {
+    const std::vector<double> ext_data_noise_stdv_lb = {0.01, 0.01, 0.01, 0.01};
+    const std::vector<double> ext_data_noise_stdv_ub = {1000.0, 1000.0, 1000.0, 1000.0};
 
     auto hyperparams = std::make_shared<kernel::MaternExtendedHyperparams>(kernel::MaternExtendedHyperparams(0.5, 0.3, 0.5, kernel::MaternSmoothness::NU_1_5, ext_data_noise_stdv));
     auto hyperparams_lower = std::make_shared<kernel::MaternExtendedHyperparams>(kernel::MaternExtendedHyperparams(0.01, 0.01, 0.01, kernel::MaternSmoothness::NU_1_5, ext_data_noise_stdv_lb));
@@ -93,7 +108,7 @@ TEST_F(GaussianProcessTestFixture, MaternKernelExtendedOptimizationTest) {
     gaussian_process::GaussianProcess gp(x, y, conditional_indices, kernel);
 
     auto init_log_marginal_likelihood = gp.LogMarginalLikelihood();
-    EXPECT_NO_THROW(gp.OptimizeHyperparameters(true));
+    EXPECT_NO_THROW(gp.OptimizeHyperparameters(false));
     EXPECT_NO_THROW(gp.LogMarginalLikelihood());
     EXPECT_NO_THROW(gp.GetPosteriorGP());
     EXPECT_GT(gp.LogMarginalLikelihood(), init_log_marginal_likelihood) << "Log marginal likelihood did not improve after optimization";
