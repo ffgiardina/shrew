@@ -11,7 +11,7 @@ option (SHREW_GP "build gaussian process subpackage" ON)
 option (SHREW_TESTS "build gtests" ON)
 
 find_package(Eigen3 3.4 REQUIRED)
-find_package(Boost 1.86 REQUIRED COMPONENTS math)
+find_package(Boost REQUIRED)
 
 if (SHREW_GP)
     find_package(NLopt REQUIRED)

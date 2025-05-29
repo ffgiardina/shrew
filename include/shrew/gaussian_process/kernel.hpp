@@ -2,6 +2,7 @@
 
 #include <Eigen/Dense>
 #include <unordered_set>
+#include <memory>
 
 namespace gaussian_process {
     namespace kernel {

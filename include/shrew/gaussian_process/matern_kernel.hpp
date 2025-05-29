@@ -3,6 +3,7 @@
 #include <vector>
 #include <Eigen/Dense>
 #include <unordered_set>
+#include <memory>
 #include "kernel.hpp"
 #include "shrew/utils/cast_utils.hpp"
 

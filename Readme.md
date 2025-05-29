@@ -14,7 +14,7 @@ Shrew requires the `Eigen C++`, `Boost.Math` libraries. If the gaussian process 
 
 #### Ubuntu/Debian
 ```bash
-sudo apt-get -y install libboost-math-dev libeigen3-dev libnlopt-cxx-dev pybind11-dev
+sudo apt-get -y install libboost-dev libeigen3-dev libnlopt-cxx-dev pybind11-dev
 ```
 #### macOS
 ```bash

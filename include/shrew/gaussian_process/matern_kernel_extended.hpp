@@ -3,6 +3,7 @@
 #include <vector>
 #include <Eigen/Dense>
 #include <map>
+#include <memory>
 #include "kernel.hpp"
 #include "matern_kernel.hpp"
 #include "shrew/utils/cast_utils.hpp"

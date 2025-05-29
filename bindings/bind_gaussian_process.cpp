@@ -2,6 +2,7 @@
 #include <pybind11/stl.h>
 #include <pybind11/eigen.h>
 #include <pybind11/numpy.h>
+#include <memory>
 #include "shrew/gaussian_process/gaussian_process.hpp"
 #include "shrew/gaussian_process/kernel.hpp"
 #include "shrew/gaussian_process/matern_kernel.hpp"
