@@ -41,13 +41,13 @@ namespace gaussian_process {
             Eigen::MatrixXd K(x.size(), x.size());
             for (int i = 0; i < x.size(); i++){
                 for (int j = 0; j <= i; j++){
-                    K(i, j) = pow(hyperparameters.signal_stdv, 2) * MaternEval(fabs(x(i) - x(j)), hyperparameters.lengthscale);
+                    K(i, j) = pow(ext_hyperparameters.signal_stdv, 2) * MaternEval(fabs(x(i) - x(j)), ext_hyperparameters.lengthscale);
 
                     if (i == j) {
                         if (override_joint_index_map.contains(i))
                             K(i, j) += pow(ext_hyperparameters.override_noise_stdv[override_joint_index_map.at(i)], 2);
                         else if (conditional_indices.contains(i))
-                            K(i, j) += pow(hyperparameters.noise_stdv, 2);
+                            K(i, j) += pow(ext_hyperparameters.noise_stdv, 2);
                     }
                     else
                         K(j, i) = K(i, j);
