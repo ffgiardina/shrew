@@ -6,14 +6,13 @@ project(shrew)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-list(APPEND CMAKE_PREFIX_PATH $ENV{SHREW_DEPS})
-
 option (SHREW_PYTHON "build python bindings" ON)
 option (SHREW_GP "build gaussian process subpackage" ON)
 option (SHREW_TESTS "build gtests" ON)
 
-find_package(Boost REQUIRED)
-find_package(Eigen3 REQUIRED)
+find_package(Eigen3 3.4 REQUIRED)
+find_package(Boost 1.86 REQUIRED COMPONENTS math)
+
 if (SHREW_GP)
     find_package(NLopt REQUIRED)
 endif()

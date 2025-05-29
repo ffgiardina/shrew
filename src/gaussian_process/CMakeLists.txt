@@ -26,6 +26,7 @@ set(public_headers
 
 set_target_properties(gp PROPERTIES PUBLIC_HEADER "${public_headers}")
 
+include(GNUInstallDirs)
 install(TARGETS gp
     EXPORT "${PROJECT_NAME}Targets"
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/gaussian_process
