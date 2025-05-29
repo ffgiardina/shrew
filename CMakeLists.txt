@@ -6,12 +6,16 @@ project(shrew)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-list(APPEND CMAKE_PREFIX_PATH $ENV{SHREW_DEPS})
+option (SHREW_PYTHON "build python bindings" ON)
+option (SHREW_GP "build gaussian process subpackage" ON)
+option (SHREW_TESTS "build gtests" ON)
 
+find_package(Eigen3 3.4 REQUIRED)
 find_package(Boost REQUIRED)
-find_package(Eigen3 REQUIRED)
-find_package(NLopt REQUIRED)
-find_package(pybind11 REQUIRED)
+
+if (SHREW_GP)
+    find_package(NLopt REQUIRED)
+endif()
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install" CACHE PATH "" FORCE)
@@ -30,11 +34,7 @@ target_sources(${PROJECT_NAME}
         src/logic_assertions.cpp 
         src/normal_distribution.cpp 
         src/generic_distribution.cpp
-        src/multivariate_normal.cpp
-        src/gaussian_process/gaussian_process.cpp
-        src/gaussian_process/maternKernel.cpp
-        src/gaussian_process/maternKernelNoise.cpp
-        src/gaussian_process/squaredExponentialKernel.cpp)
+        src/multivariate_normal.cpp)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
@@ -46,7 +46,6 @@ target_link_libraries(
   shrew
   Boost::boost
   Eigen3::Eigen
-  NLopt::nlopt
 )
 
 set(public_headers
@@ -59,24 +58,47 @@ set(public_headers
     include/shrew/random_vector.hpp
     include/shrew/arithmetic.hpp
     include/shrew/logic_assertions.hpp
-    include/shrew/numerical_methods.hpp
-    include/shrew/gaussian_process/gaussian_process.hpp
-    include/shrew/gaussian_process/kernel.hpp
-    include/shrew/gaussian_process/maternKernel.hpp
-    include/shrew/gaussian_process/maternKernelNoise.hpp
-    include/shrew/gaussian_process/squaredExponentialKernel.hpp)
+    include/shrew/numerical_methods.hpp)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${public_headers}")
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "d")
 
-pybind11_add_module(pyshrew
-    bindings/pyshrew_bind.cpp
-    bindings/bind_distributions.cpp
-    bindings/bind_random_variable.cpp
-    bindings/bind_random_vector.cpp
-    bindings/bind_gaussian_process.cpp
-)
-target_link_libraries(pyshrew PRIVATE shrew)
+if (SHREW_GP)
+    message(STATUS "Building gaussian process subpackage")
+    add_subdirectory(src/gaussian_process)
+endif()
+
+if (SHREW_PYTHON)
+    message(STATUS "Building Python bindings")
+    find_package(pybind11 REQUIRED)
+    if (SHREW_GP)
+        pybind11_add_module(pyshrew
+            bindings/pyshrew_bind.cpp
+            bindings/bind_distributions.cpp
+            bindings/bind_random_variable.cpp
+            bindings/bind_random_vector.cpp
+            bindings/bind_gaussian_process.cpp
+        )
+        target_link_libraries(pyshrew PRIVATE shrew gp)
+    else()
+        pybind11_add_module(pyshrew
+            bindings/pyshrew_bind.cpp
+            bindings/bind_distributions.cpp
+            bindings/bind_random_variable.cpp
+            bindings/bind_random_vector.cpp
+        )
+        target_link_libraries(pyshrew PRIVATE shrew)
+    endif()
+endif()
+
+if (SHREW_TESTS)
+    message(STATUS "Building tests")
+    enable_testing()
+    add_subdirectory(tests)
+    if (SHREW_GP)
+        add_subdirectory(tests/gaussian_process)
+    endif()
+endif()
 
 # Installation
 include(GNUInstallDirs) # Define GNU standard installation directories
@@ -104,19 +126,17 @@ install(FILES
 )
 
 # Python pip-compatible structure installation
-install(TARGETS pyshrew
-    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew/pyshrew
-)
+if (SHREW_PYTHON)
+    message(STATUS "Installing Python bindings")
+    install(TARGETS pyshrew
+        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew/pyshrew
+    )
+    # Install __init__.py so pip sees it as a package
+    install(FILES bindings/__init__.py
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew/pyshrew
+    )
 
-# Install __init__.py so pip sees it as a package
-install(FILES bindings/__init__.py
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew/pyshrew
-)
-
-# Optional: Install other metadata
-install(FILES bindings/setup.py
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew
-)
-
-enable_testing()
-add_subdirectory("tests")
+    install(FILES bindings/setup.py
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew
+    )
+endif()

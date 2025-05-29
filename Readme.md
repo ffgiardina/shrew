@@ -8,19 +8,26 @@ Currently featured:
 - Conditionals and marginals of multivariate normal random vectors
 - Gaussian process model with hyperparameter optimization
 
-## Requirements
-Shrew requires the `Eigen C++`, `Boost.Math`, `NLopt`, and `pybind11` libraries. If these dependencies are not installed in the default paths, set the environment variable `SHREW_DEPS` to the root directory where they are located.
-
 ## Installation
+### Third party
+Shrew requires the `Eigen C++`, `Boost.Math` libraries. If the gaussian process subpackage and pybindings are built, also the `NLopt`, and `pybind11` libraries are required. 
+
+#### Ubuntu/Debian
+```bash
+sudo apt-get -y install libboost-dev libeigen3-dev libnlopt-cxx-dev pybind11-dev
+```
+#### macOS
+```bash
+brew install eigen boost nlopt pybind11
+```
+
 ### CMake
-After cloning the remote repository, open the terminal and set the working directory to the local repository
+After cloning the repository, open the terminal and set the working directory to the local repository
 ```console
 cd <PathToRepo>/shrew
-mkdir build
-cd build
-cmake ..
-cmake --build .
-cmake --install .
+cmake -S . -B build
+cmake --build build
+cmake --install build
 ```
 The installed library should now be in the `install` directory inside the repository. 
 To use it in other projects, import it using the `find_package(shrew)` command in your `CMakeLists.txt`. You may have to append the install directory to your `CMAKE_PREFIX_PATH` variable. Finally, add the library to your target using `target_link_libraries` with the shrew library target name `Shrew::shrew`.
@@ -30,7 +37,7 @@ There are python bindings for the shrew package. Currently only support for bina
 
 To install it, you can use `pip install <shrew path>/install/pyshrew` after running the cmake installation described above. Ensure the `PYTHON_EXECUTABLE` is set to the same python instance as the pip command by running
 ```bash
-cmake .. -DPYTHON_EXECUTABLE=<path-to-your-python-executable>
+cmake -S . -B build -DPYTHON_EXECUTABLE=<path-to-your-python-executable>
 ```
 
 ## Python Examples
@@ -89,16 +96,13 @@ x = np.append(x_eval, x_data)
 y = np.array([np.sin(xi) + np.random.normal(0, noise) for xi in x_data])
 conditional_indices = [x for x in range(n_eval, n_eval+n_data)]
 
-# Initial hyperparameters: sigma_f, l, sigma_n1
-hp_ic = [0.5, 0.3, 0.5]
+# Define hyperparameter initial values and their lower and upper bounds
+hyperparameters_iv = ps.SEHyperparams(lengthscale=0.5, noise_stdv=0.3, signal_stdv=0.5)
+hyperparameters_lb = ps.SEHyperparams(lengthscale=0, noise_stdv=0, signal_stdv=0)
+hyperparameters_ub = ps.SEHyperparams(lengthscale=100, noise_stdv=100, signal_stdv=100)
 
-# Lower and upper bounds for hyperparameters
-hp_lower_bounds = [0, 0, 0]
-hp_upper_bounds = [100, 100, 100]
-
-# Define kernel
 kernel = ps.SquaredExponential(
-    hp_ic, hp_lower_bounds, hp_upper_bounds, 
+    hyperparameters_iv, hyperparameters_lb, hyperparameters_ub, 
     conditional_indices)
 
 # Create Gaussian process and optimize hyperparameters
