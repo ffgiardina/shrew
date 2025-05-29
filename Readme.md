@@ -97,9 +97,9 @@ y = np.array([np.sin(xi) + np.random.normal(0, noise) for xi in x_data])
 conditional_indices = [x for x in range(n_eval, n_eval+n_data)]
 
 # Define hyperparameter initial values and their lower and upper bounds
-hyperparameters_iv = ps.SEHyperparams(lengthscale=0.5, noise_stdv=0.3, signal_stdv=0.5)
-hyperparameters_lb = ps.SEHyperparams(lengthscale=0, noise_stdv=0, signal_stdv=0)
-hyperparameters_ub = ps.SEHyperparams(lengthscale=100, noise_stdv=100, signal_stdv=100)
+hyperparameters_iv = ps.SEHyperparams(signal_stdv=0.5, lengthscale=0.5, noise_stdv=0.3)
+hyperparameters_lb = ps.SEHyperparams(signal_stdv=0, lengthscale=0, noise_stdv=0)
+hyperparameters_ub = ps.SEHyperparams(signal_stdv=100, lengthscale=100, noise_stdv=100)
 
 kernel = ps.SquaredExponential(
     hyperparameters_iv, hyperparameters_lb, hyperparameters_ub, 
