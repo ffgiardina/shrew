@@ -23,6 +23,7 @@ namespace gaussian_process {
             MaternExtendedHyperparams ext_hyperparameters;
             MaternExtendedHyperparams ext_hp_lower_bounds;
             MaternExtendedHyperparams ext_hp_upper_bounds;
+            std::unordered_map<int, int> override_joint_index_map;
             std::unordered_map<int, int> override_conditional_index_map;
 
             std::unordered_map<std::string, int> opt_params_to_idx = {
@@ -60,6 +61,7 @@ namespace gaussian_process {
             ext_hyperparameters(*shrew::utils::cast_pointer<MaternExtendedHyperparams>(hyperparameters_, "shrew::kernel::MaternExtendedKernel(): hyperparameters_")),
             ext_hp_lower_bounds(*shrew::utils::cast_pointer<MaternExtendedHyperparams>(hyperparameters_, "shrew::kernel::MaternExtendedKernel(): hyperparameters_")),
             ext_hp_upper_bounds(*shrew::utils::cast_pointer<MaternExtendedHyperparams>(hyperparameters_, "shrew::kernel::MaternExtendedKernel(): hyperparameters_")) {
+                override_joint_index_map = std::unordered_map<int, int> {};
                 override_conditional_index_map = std::unordered_map<int, int> {};
             };
             MaternExtended(std::shared_ptr<Hyperparameters> hyperparameters_, std::shared_ptr<Hyperparameters> hp_lower_bounds_, 
@@ -69,6 +71,7 @@ namespace gaussian_process {
                 ext_hp_lower_bounds(*shrew::utils::cast_pointer<MaternExtendedHyperparams>(hp_lower_bounds_, "shrew::kernel::MaternExtendedKernel(): hp_lower_bounds_")),
                 ext_hp_upper_bounds(*shrew::utils::cast_pointer<MaternExtendedHyperparams>(hp_upper_bounds_, "shrew::kernel::MaternExtendedKernel(): hp_upper_bounds_")) {
                 for (size_t i = 0; i < ext_hyperparameters.override_noise_stdv.size(); ++i) {
+                    override_joint_index_map[conditional_indices_[override_conditional_indices_[i]]] = i;
                     override_conditional_index_map[override_conditional_indices_[i]] = i;
                 }      
             };

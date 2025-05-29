@@ -44,8 +44,8 @@ namespace gaussian_process {
                     K(i, j) = pow(hyperparameters.signal_stdv, 2) * MaternEval(fabs(x(i) - x(j)), hyperparameters.lengthscale);
 
                     if (i == j) {
-                        if (override_conditional_index_map.contains(i))
-                            K(i, j) += pow(ext_hyperparameters.override_noise_stdv[override_conditional_index_map.at(i)], 2);
+                        if (override_joint_index_map.contains(i))
+                            K(i, j) += pow(ext_hyperparameters.override_noise_stdv[override_joint_index_map.at(i)], 2);
                         else if (conditional_indices.contains(i))
                             K(i, j) += pow(hyperparameters.noise_stdv, 2);
                     }

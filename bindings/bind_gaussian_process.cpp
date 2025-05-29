@@ -21,21 +21,21 @@ void bind_gaussian_process(py::module_ &m) {
 
     py::class_<Kernel>(m, "Kernel");
 
-    py::class_<Hyperparameters>(m, "Hyperparameters");
+    py::class_<Hyperparameters, std::shared_ptr<Hyperparameters>>(m, "Hyperparameters");
 
-    py::class_<SEHyperparams, Hyperparameters>(m, "SEHyperparams")
+    py::class_<SEHyperparams, Hyperparameters, std::shared_ptr<SEHyperparams>>(m, "SEHyperparams")
         .def(py::init<double, double, double>(), py::arg("lengthscale"), py::arg("noise_stdv"), py::arg("signal_stdv"));
 
-    py::class_<MaternHyperparams, Hyperparameters>(m, "MaternHyperparams")
+    py::class_<MaternHyperparams, Hyperparameters, std::shared_ptr<MaternHyperparams>>(m, "MaternHyperparams")
         .def(py::init<double, double, double, MaternSmoothness>(), 
              py::arg("lengthscale"), py::arg("noise_stdv"), py::arg("signal_stdv"), py::arg("nu"));
 
-    py::class_<MaternExtendedHyperparams, MaternHyperparams>(m, "MaternExtendedHyperparams")
+    py::class_<MaternExtendedHyperparams, MaternHyperparams, std::shared_ptr<MaternExtendedHyperparams>>(m, "MaternExtendedHyperparams")
         .def(py::init<double, double, double, MaternSmoothness, std::vector<double>>(), 
-             py::arg("lengthscale"), py::arg("noise_stdv"), py::arg("signal_stdv"), py::arg("nu"), py::arg("ext_data_noise_stdv"));
+             py::arg("lengthscale"), py::arg("noise_stdv"), py::arg("signal_stdv"), py::arg("nu"), py::arg("override_noise_stdv"));
 
     py::class_<MaternExtended, Kernel>(m, "MaternExtended")
-        .def(py::init<std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::vector<int>, std::vector<int>>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"), py::arg("conditional_indices_noise2"))
+        .def(py::init<std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::vector<int>, std::vector<int>>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"), py::arg("override_conditional_indices"))
         .def("get_hyperparameters", &MaternExtended::GetHyperparameters);
 
     py::class_<Matern, Kernel>(m, "Matern")

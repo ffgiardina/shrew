@@ -89,16 +89,13 @@ x = np.append(x_eval, x_data)
 y = np.array([np.sin(xi) + np.random.normal(0, noise) for xi in x_data])
 conditional_indices = [x for x in range(n_eval, n_eval+n_data)]
 
-# Initial hyperparameters: sigma_f, l, sigma_n1
-hp_ic = [0.5, 0.3, 0.5]
+# Define hyperparameter initial values and their lower and upper bounds
+hyperparameters_iv = ps.SEHyperparams(lengthscale=0.5, noise_stdv=0.3, signal_stdv=0.5)
+hyperparameters_lb = ps.SEHyperparams(lengthscale=0, noise_stdv=0, signal_stdv=0)
+hyperparameters_ub = ps.SEHyperparams(lengthscale=100, noise_stdv=100, signal_stdv=100)
 
-# Lower and upper bounds for hyperparameters
-hp_lower_bounds = [0, 0, 0]
-hp_upper_bounds = [100, 100, 100]
-
-# Define kernel
 kernel = ps.SquaredExponential(
-    hp_ic, hp_lower_bounds, hp_upper_bounds, 
+    hyperparameters_iv, hyperparameters_lb, hyperparameters_ub, 
     conditional_indices)
 
 # Create Gaussian process and optimize hyperparameters
