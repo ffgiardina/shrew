@@ -8,10 +8,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{SHREW_DEPS})
 
+option (SHREW_PYTHON "build python bindings" ON)
+option (SHREW_GP "build gaussian process package" ON)
+option (SHREW_TESTS "build gtests" ON)
+
 find_package(Boost REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(NLopt REQUIRED)
-find_package(pybind11 REQUIRED)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install" CACHE PATH "" FORCE)
@@ -69,14 +72,19 @@ set(public_headers
 set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${public_headers}")
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "d")
 
-pybind11_add_module(pyshrew
-    bindings/pyshrew_bind.cpp
-    bindings/bind_distributions.cpp
-    bindings/bind_random_variable.cpp
-    bindings/bind_random_vector.cpp
-    bindings/bind_gaussian_process.cpp
-)
-target_link_libraries(pyshrew PRIVATE shrew)
+
+if(SHREW_PYTHON)
+    message(STATUS "Building Python bindings")
+    find_package(pybind11 REQUIRED)
+    pybind11_add_module(pyshrew
+        bindings/pyshrew_bind.cpp
+        bindings/bind_distributions.cpp
+        bindings/bind_random_variable.cpp
+        bindings/bind_random_vector.cpp
+        bindings/bind_gaussian_process.cpp
+    )
+    target_link_libraries(pyshrew PRIVATE shrew)
+endif()
 
 # Installation
 include(GNUInstallDirs) # Define GNU standard installation directories
@@ -104,19 +112,24 @@ install(FILES
 )
 
 # Python pip-compatible structure installation
-install(TARGETS pyshrew
-    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew/pyshrew
-)
+if (SHREW_PYTHON)
+    message(STATUS "Installing Python bindings")
+    install(TARGETS pyshrew
+        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew/pyshrew
+    )
+    # Install __init__.py so pip sees it as a package
+    install(FILES bindings/__init__.py
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew/pyshrew
+    )
 
-# Install __init__.py so pip sees it as a package
-install(FILES bindings/__init__.py
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew/pyshrew
-)
+    install(FILES bindings/setup.py
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew
+    )
+endif()
 
-# Optional: Install other metadata
-install(FILES bindings/setup.py
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew
-)
+if (SHREW_TESTS)
+    message(STATUS "Building tests")
+    enable_testing()
+    add_subdirectory(tests)
+endif()
 
-enable_testing()
-add_subdirectory("tests")
