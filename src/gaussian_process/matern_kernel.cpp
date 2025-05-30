@@ -18,9 +18,9 @@ namespace gaussian_process {
             if (params.size() != 3) {
                 throw std::invalid_argument("Matern::ApplyParams(): parameter vector must have size 3");
             }
-            hyperparameters.signal_stdv = params[0];
-            hyperparameters.lengthscale = params[1];
-            hyperparameters.noise_stdv = params[2];
+            hyperparameters.signal_stdv = params.at(0);
+            hyperparameters.lengthscale = params.at(1);
+            hyperparameters.noise_stdv = params.at(2);
         }
 
         double Matern::MaternEval(double r, double l) const {
@@ -60,9 +60,9 @@ namespace gaussian_process {
             Eigen::MatrixXd K(x.size(), x.size());
             for (int i = 0; i < x.size(); i++){
                 for (int j = 0; j <= i; j++){
-                    K(i, j) = pow(hyperparams[opt_params_to_idx.at("signal_stdv")], 2) * MaternEval(fabs(x(i) - x(j)), hyperparams[opt_params_to_idx.at("lengthscale")]);
+                    K(i, j) = pow(hyperparams.at(opt_params_to_idx.at("signal_stdv")), 2) * MaternEval(fabs(x(i) - x(j)), hyperparams.at(opt_params_to_idx.at("lengthscale")));
                     if (i == j) 
-                        K(i, j) += pow(hyperparams[opt_params_to_idx.at("noise_stdv")], 2);
+                        K(i, j) += pow(hyperparams.at(opt_params_to_idx.at("noise_stdv")), 2);
                     else 
                         K(j, i) = K(i, j);
                 }
@@ -78,17 +78,17 @@ namespace gaussian_process {
             }
             for (int i = 0; i < x.size(); i++){
                 for (int j = 0; j <= i; j++){
-                        dK[opt_params_to_idx.at("signal_stdv")](i, j) = 2 * hyperparams_[opt_params_to_idx.at("signal_stdv")] * MaternEval(fabs(x(i) - x(j)), hyperparams_[opt_params_to_idx.at("lengthscale")]);
+                        dK[opt_params_to_idx.at("signal_stdv")](i, j) = 2 * hyperparams_.at(opt_params_to_idx.at("signal_stdv")) * MaternEval(fabs(x(i) - x(j)), hyperparams_.at(opt_params_to_idx.at("lengthscale")));
                         if (i != j) 
-                            dK[opt_params_to_idx.at("signal_stdv")](j, i) = dK[opt_params_to_idx.at("signal_stdv")](i, j);
+                            dK[opt_params_to_idx.at("signal_stdv")](j, i) = dK.at(opt_params_to_idx.at("signal_stdv"))(i, j);
 
-                        dK[opt_params_to_idx.at("lengthscale")](i, j) = pow(hyperparams_[opt_params_to_idx.at("signal_stdv")], 2) * DerivativeMaternEval(fabs(x(i) - x(j)), hyperparams_[opt_params_to_idx.at("lengthscale")]);
+                        dK[opt_params_to_idx.at("lengthscale")](i, j) = pow(hyperparams_.at(opt_params_to_idx.at("signal_stdv")), 2) * DerivativeMaternEval(fabs(x(i) - x(j)), hyperparams_.at(opt_params_to_idx.at("lengthscale")));
                         if (i != j)
-                            dK[opt_params_to_idx.at("lengthscale")](j, i) = dK[opt_params_to_idx.at("lengthscale")](i, j);
+                            dK[opt_params_to_idx.at("lengthscale")](j, i) = dK.at(opt_params_to_idx.at("lengthscale"))(i, j);
                         
                         dK[opt_params_to_idx.at("noise_stdv")](i, j) = 0;
                         if (i == j)
-                            dK[opt_params_to_idx.at("noise_stdv")](i, j) += 2 * hyperparams_[opt_params_to_idx.at("noise_stdv")];
+                            dK[opt_params_to_idx.at("noise_stdv")](i, j) += 2 * hyperparams_.at(opt_params_to_idx.at("noise_stdv"));
                         else
                             dK[opt_params_to_idx.at("noise_stdv")](j, i) = 0;
                 }

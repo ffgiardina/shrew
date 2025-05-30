@@ -26,14 +26,14 @@ namespace gaussian_process {
 
         void MaternExtended::ApplyParams(const std::vector<double> &params) {
             if (params.size() != 3 + override_conditional_index_map.size()) {
-                throw std::invalid_argument("MaternExtended::ApplyParams(): parameter vector must have size 3 + number of external data points");
+                throw std::invalid_argument("MaternExtended::ApplyParams(): parameter vector must have size 3 + number of override noise data points");
             }
-            ext_hyperparameters.signal_stdv = params[0];
-            ext_hyperparameters.lengthscale = params[1];
-            ext_hyperparameters.noise_stdv = params[2];
+            ext_hyperparameters.signal_stdv = params.at(0);
+            ext_hyperparameters.lengthscale = params.at(1);
+            ext_hyperparameters.noise_stdv = params.at(2);
             ext_hyperparameters.override_noise_stdv.clear();
             for (size_t i = 3; i < params.size(); ++i) {
-                ext_hyperparameters.override_noise_stdv.push_back(params[i]);
+                ext_hyperparameters.override_noise_stdv.push_back(params.at(i));
             }
         }
 
@@ -45,7 +45,7 @@ namespace gaussian_process {
 
                     if (i == j) {
                         if (override_joint_index_map.contains(i))
-                            K(i, j) += pow(ext_hyperparameters.override_noise_stdv[override_joint_index_map.at(i)], 2);
+                            K(i, j) += pow(ext_hyperparameters.override_noise_stdv.at(override_joint_index_map.at(i)), 2);
                         else if (conditional_indices.contains(i))
                             K(i, j) += pow(ext_hyperparameters.noise_stdv, 2);
                     }
@@ -60,13 +60,13 @@ namespace gaussian_process {
             Eigen::MatrixXd K(x.size(), x.size());
             for (int i = 0; i < x.size(); i++){
                 for (int j = 0; j <= i; j++){
-                    K(i, j) = pow(hyperparams[opt_params_to_idx.at("signal_stdv")], 2) * MaternEval(fabs(x(i) - x(j)), hyperparams[opt_params_to_idx.at("lengthscale")]);
+                    K(i, j) = pow(hyperparams.at(opt_params_to_idx.at("signal_stdv")), 2) * MaternEval(fabs(x(i) - x(j)), hyperparams.at(opt_params_to_idx.at("lengthscale")));
                     
                     if (i == j) {
                         if (override_conditional_index_map.contains(i)) 
-                            K(i, j) += pow(hyperparams[opt_params_to_idx.at("override_noise_stdv") + override_conditional_index_map.at(i)], 2);
+                            K(i, j) += pow(hyperparams.at(opt_params_to_idx.at("override_noise_stdv") + override_conditional_index_map.at(i)), 2);
                         else
-                            K(i, j) += pow(hyperparams[opt_params_to_idx.at("noise_stdv")], 2);
+                            K(i, j) += pow(hyperparams.at(opt_params_to_idx.at("noise_stdv")), 2);
                     }
                     else
                         K(j, i) = K(i, j);
@@ -84,19 +84,19 @@ namespace gaussian_process {
 
             for (int i = 0; i < x.size(); i++){
                 for (int j = 0; j <= i; j++){
-                    dK[opt_params_to_idx.at("signal_stdv")](i, j) = 2 * hyperparams_[opt_params_to_idx.at("signal_stdv")] * MaternEval(fabs(x(i) - x(j)), hyperparams_[opt_params_to_idx.at("lengthscale")]);
-                    dK[opt_params_to_idx.at("lengthscale")](i, j) = pow(hyperparams_[opt_params_to_idx.at("signal_stdv")], 2) * DerivativeMaternEval(fabs(x(i) - x(j)), hyperparams_[opt_params_to_idx.at("lengthscale")]);
+                    dK[opt_params_to_idx.at("signal_stdv")](i, j) = 2 * hyperparams_.at(opt_params_to_idx.at("signal_stdv")) * MaternEval(fabs(x(i) - x(j)), hyperparams_.at(opt_params_to_idx.at("lengthscale")));
+                    dK[opt_params_to_idx.at("lengthscale")](i, j) = pow(hyperparams_.at(opt_params_to_idx.at("signal_stdv")), 2) * DerivativeMaternEval(fabs(x(i) - x(j)), hyperparams_.at(opt_params_to_idx.at("lengthscale")));
 
                     if (i != j) {
-                        dK[opt_params_to_idx.at("signal_stdv")](j, i) = dK[opt_params_to_idx.at("signal_stdv")](i, j);
-                        dK[opt_params_to_idx.at("lengthscale")](j, i) = dK[opt_params_to_idx.at("lengthscale")](i, j);
+                        dK[opt_params_to_idx.at("signal_stdv")](j, i) = dK.at(opt_params_to_idx.at("signal_stdv"))(i, j);
+                        dK[opt_params_to_idx.at("lengthscale")](j, i) = dK.at(opt_params_to_idx.at("lengthscale"))(i, j);
                     }
                     else {
                         if (override_conditional_index_map.contains(i)) {
                             int k = opt_params_to_idx.at("override_noise_stdv") + override_conditional_index_map.at(i);
-                            dK[k](i, j) += 2 * hyperparams_[k];
+                            dK[k](i, j) += 2 * hyperparams_.at(k);
                         } else {
-                            dK[opt_params_to_idx.at("noise_stdv")](i, j) += 2 * hyperparams_[opt_params_to_idx.at("noise_stdv")];
+                            dK[opt_params_to_idx.at("noise_stdv")](i, j) += 2 * hyperparams_.at(opt_params_to_idx.at("noise_stdv"));
                         }
                     }
                 }

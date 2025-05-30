@@ -50,7 +50,7 @@ namespace gaussian_process {
 
         std::vector<Eigen::MatrixXd> dK = kernel_->OptimizationKernelDerivatives(params, x_);
         for (int i = 0; i < dK.size(); i++) {
-            gradient[i] = 0.5 * ((alpha * alpha.transpose() - Kinv) * dK[i]).trace();
+            gradient[i] = 0.5 * ((alpha * alpha.transpose() - Kinv) * dK.at(i)).trace();
         }
 
         return -0.5 * y_.transpose()*alpha - log_trace - m/2.0 * log(2 * M_PI);
