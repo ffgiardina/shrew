@@ -20,12 +20,12 @@ protected:
     Eigen::VectorXd x_eval = Eigen::VectorXd::Zero(num_eval);
     Eigen::VectorXd x = Eigen::VectorXd::Zero(num_data + num_eval);
     Eigen::VectorXd y = Eigen::VectorXd::Zero(num_data);
-    std::vector<int> conditional_indices;
+    Eigen::VectorXi conditional_indices;
     const double range_x = 10.0;
     const double noise_std = 0.2;
     const double freq = 1.0;
     const std::vector<double> ext_data_noise_stdv = {0.1, 0.2, 0.3, 0.6};
-    const std::vector<int> ext_data_conditional_indices = {5, 12, 15, 20};
+    const Eigen::VectorXi ext_data_conditional_indices = (Eigen::VectorXi(4) << 5, 12, 15, 20).finished();
 
     void SetUp() override {
         generateNoisySinusoid();

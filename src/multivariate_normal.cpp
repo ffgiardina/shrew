@@ -14,16 +14,16 @@ namespace shrew
       return pow(2 * M_PI, -x.size() / 2.0) / sqrt(det_K) * exp(exponent);
     }
 
-    MultivariateNormal getMarginal(MultivariateNormal random_vector, std::vector<int> marginal_indices)
+    MultivariateNormal getMarginal(MultivariateNormal random_vector, Eigen::VectorXi marginal_indices)
     {
       return MultivariateNormal(random_vector.mu(marginal_indices), random_vector.K(marginal_indices, marginal_indices));
     }
 
-    MultivariateNormal getConditional(MultivariateNormal random_vector, std::vector<int> conditional_indices, char _operator, Eigen::MatrixXd value)
+    MultivariateNormal getConditional(MultivariateNormal random_vector, Eigen::VectorXi conditional_indices, char _operator, Eigen::MatrixXd value)
     {
       auto conditional_index_set = std::unordered_set<int>(conditional_indices.begin(), conditional_indices.end());
       int n = random_vector.mu.size();
-      std::vector<int> non_conditional_indices(n - conditional_indices.size());
+      Eigen::VectorXi non_conditional_indices(n - conditional_indices.size());
       for (int i = 0, k = 0; i < n; ++i) {
         if (!conditional_index_set.contains(i)) {
           non_conditional_indices[k] = i;
@@ -62,7 +62,7 @@ namespace shrew
       auto delta = std::get<1>(conditional_index_range) - std::get<0>(conditional_index_range) + 1;
       if (delta <= 0)
         throw std::logic_error("Error: Start index greater than end index for conditional range.");
-      std::vector<int> conditional_indices(std::max(0, delta));
+      Eigen::VectorXi conditional_indices(std::max(0, delta));
       std::iota(std::begin(conditional_indices), std::end(conditional_indices), std::get<0>(conditional_index_range));
       return getConditional(random_vector, conditional_indices, _operator, value);
     }

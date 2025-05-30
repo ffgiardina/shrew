@@ -30,7 +30,7 @@ namespace gaussian_process {
           public:
             Eigen::VectorXd y;
             Eigen::VectorXd x;
-            std::vector<int> conditional_indices;
+            Eigen::VectorXi conditional_indices;
             kernel::Kernel *kernel; 
             HpOptimizationMeta hp_opt_meta;
 
@@ -43,7 +43,7 @@ namespace gaussian_process {
             std::tuple<std::vector<double>, std::vector<double>> GetPosteriorGP();
             
             GaussianProcess(Eigen::VectorXd x_, Eigen::VectorXd y_,
-                std::vector<int> conditional_indices_, kernel::Kernel &kernel_) {
+              Eigen::VectorXi conditional_indices_, kernel::Kernel &kernel_) {
                 x = x_;
                 y = y_;
                 conditional_indices = conditional_indices_;

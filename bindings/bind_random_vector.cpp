@@ -16,5 +16,5 @@ void bind_random_vector(py::module_ &m) {
         .def_readonly("K", &MultivariateNormal::K);
 
     m.def("get_marginal", &getMarginal, py::arg("random_vector"), py::arg("marginal_indices"));
-    m.def("get_conditional", py::overload_cast<MultivariateNormal, std::vector<int>, char, Eigen::MatrixXd>(&getConditional), py::arg("random_vector"), py::arg("conditional_indices"), py::arg("operator"), py::arg("value"));
+    m.def("get_conditional", py::overload_cast<MultivariateNormal, Eigen::VectorXi, char, Eigen::MatrixXd>(&getConditional), py::arg("random_vector"), py::arg("conditional_indices"), py::arg("operator"), py::arg("value"));
 }

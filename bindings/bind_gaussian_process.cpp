@@ -15,7 +15,7 @@ using namespace gaussian_process::kernel;
 
 void bind_gaussian_process(py::module_ &m) {
     py::class_<GaussianProcess>(m, "GaussianProcess")
-        .def(py::init<Eigen::VectorXd , Eigen::VectorXd, std::vector<int>, Kernel&>(), py::arg("x"), py::arg("y"), py::arg("conditional_indices"), py::arg("kernel"))
+        .def(py::init<Eigen::VectorXd , Eigen::VectorXd, Eigen::VectorXi, Kernel&>(), py::arg("x"), py::arg("y"), py::arg("conditional_indices"), py::arg("kernel"))
         .def("log_marginal_likelihood", py::overload_cast<>(&GaussianProcess::LogMarginalLikelihood))
         .def("optimize", &GaussianProcess::OptimizeHyperparameters, py::arg("progress_output") = true)
         .def("get_posterior", &GaussianProcess::GetPosteriorGP);
@@ -36,15 +36,15 @@ void bind_gaussian_process(py::module_ &m) {
         py::arg("signal_stdv"), py::arg("lengthscale"), py::arg("noise_stdv"), py::arg("nu"), py::arg("override_noise_stdv"));
 
     py::class_<MaternExtended, Kernel>(m, "MaternExtended")
-        .def(py::init<std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::vector<int>, std::vector<int>>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"), py::arg("override_conditional_indices"))
+        .def(py::init<std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, Eigen::VectorXi, Eigen::VectorXi>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"), py::arg("override_conditional_indices"))
         .def("get_hyperparameters", &MaternExtended::GetHyperparameters);
 
     py::class_<Matern, Kernel>(m, "Matern")
-        .def(py::init<std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::vector<int>>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"))
+        .def(py::init<std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, Eigen::VectorXi>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"))
         .def("get_hyperparameters", &Matern::GetHyperparameters);
 
     py::class_<SquaredExponential, Kernel>(m, "SquaredExponential")
-        .def(py::init<std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::vector<int>>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"))
+        .def(py::init<std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, Eigen::VectorXi>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"))
         .def("get_hyperparameters", &SquaredExponential::GetHyperparameters);
 
     py::enum_<MaternSmoothness>(m, "MaternSmoothness")
