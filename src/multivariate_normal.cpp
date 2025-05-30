@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <numeric>
+#include <unordered_set>
 
 namespace shrew
 {
@@ -20,16 +21,14 @@ namespace shrew
 
     MultivariateNormal getConditional(MultivariateNormal random_vector, std::vector<int> conditional_indices, char _operator, Eigen::MatrixXd value)
     {
+      auto conditional_index_set = std::unordered_set<int>(conditional_indices.begin(), conditional_indices.end());
       int n = random_vector.mu.size();
       std::vector<int> non_conditional_indices(n - conditional_indices.size());
       for (int i = 0, k = 0; i < n; ++i) {
-        auto c_index = conditional_indices[k];
-        if (c_index < 0 || c_index >= n)
-          throw std::out_of_range("Conditional index out of bounds");
-        if (k < conditional_indices.size() && i == c_index)
-          k += 1;
-        else
-          non_conditional_indices[i-k] = i;
+        if (!conditional_index_set.contains(i)) {
+          non_conditional_indices[k] = i;
+          ++k;
+        }
       }
 
       Eigen::VectorXd mu_conditioned;

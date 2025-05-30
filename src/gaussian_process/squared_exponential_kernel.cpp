@@ -18,9 +18,9 @@ namespace gaussian_process {
             if (params.size() != 3) {
                 throw std::invalid_argument("SquaredExponential::ApplyParams(): parameter vector must have size 3");
             }
-            hyperparameters.signal_stdv = params[0];
-            hyperparameters.lengthscale = params[1];
-            hyperparameters.noise_stdv = params[2];
+            hyperparameters.signal_stdv = params.at(0);
+            hyperparameters.lengthscale = params.at(1);
+            hyperparameters.noise_stdv = params.at(2);
         }
 
         Eigen::MatrixXd SquaredExponential::KernelFunc(Eigen::VectorXd x) const {    
@@ -43,9 +43,9 @@ namespace gaussian_process {
 
             for (int i = 0; i < x.size(); i++){
                 for (int j = 0; j <= i; j++){
-                    K(i, j) = pow(hyperparams[opt_params_to_idx.at("signal_stdv")], 2) * exp(-1.0 / (2.0 * pow(hyperparams[opt_params_to_idx.at("lengthscale")], 2.0)) * pow(x(i) - x(j), 2.0));
+                    K(i, j) = pow(hyperparams.at(opt_params_to_idx.at("signal_stdv")), 2) * exp(-1.0 / (2.0 * pow(hyperparams.at(opt_params_to_idx.at("lengthscale")), 2.0)) * pow(x(i) - x(j), 2.0));
                     if (i == j)
-                        K(i, j) += pow(hyperparams[opt_params_to_idx.at("noise_stdv")], 2);
+                        K(i, j) += pow(hyperparams.at(opt_params_to_idx.at("noise_stdv")), 2);
                     else
                         K(j, i) = K(i, j);
                 }
@@ -62,17 +62,17 @@ namespace gaussian_process {
 
             for (int i = 0; i < x.size(); i++){
                 for (int j = 0; j <= i; j++){
-                        dK[opt_params_to_idx.at("signal_stdv")](i, j) = 2 * hyperparams[opt_params_to_idx.at("signal_stdv")] * exp(-1.0 / (2.0 * pow(hyperparams[opt_params_to_idx.at("lengthscale")], 2.0)) * pow(x(i) - x(j), 2.0));
+                        dK[opt_params_to_idx.at("signal_stdv")](i, j) = 2 * hyperparams.at(opt_params_to_idx.at("signal_stdv")) * exp(-1.0 / (2.0 * pow(hyperparams.at(opt_params_to_idx.at("lengthscale")), 2.0)) * pow(x(i) - x(j), 2.0));
                         if (i != j)
-                            dK[opt_params_to_idx.at("signal_stdv")](j, i) = dK[opt_params_to_idx.at("signal_stdv")](i, j);
+                            dK[opt_params_to_idx.at("signal_stdv")](j, i) = dK.at(opt_params_to_idx.at("signal_stdv"))(i, j);
 
-                        dK[opt_params_to_idx.at("lengthscale")](i, j) = 1.0 / pow(hyperparams[opt_params_to_idx.at("lengthscale")], 3.0) * pow(x(i) - x(j), 2.0) * pow(hyperparams[opt_params_to_idx.at("signal_stdv")], 2) * exp(-1.0 / (2.0 * pow(hyperparams[opt_params_to_idx.at("lengthscale")], 2.0)) * pow(x(i) - x(j), 2.0));
+                        dK[opt_params_to_idx.at("lengthscale")](i, j) = 1.0 / pow(hyperparams.at(opt_params_to_idx.at("lengthscale")), 3.0) * pow(x(i) - x(j), 2.0) * pow(hyperparams.at(opt_params_to_idx.at("signal_stdv")), 2) * exp(-1.0 / (2.0 * pow(hyperparams.at(opt_params_to_idx.at("lengthscale")), 2.0)) * pow(x(i) - x(j), 2.0));
                         if (i != j)
-                            dK[opt_params_to_idx.at("lengthscale")](j, i) = dK[opt_params_to_idx.at("lengthscale")](i, j);
+                            dK[opt_params_to_idx.at("lengthscale")](j, i) = dK.at(opt_params_to_idx.at("lengthscale"))(i, j);
 
                         dK[opt_params_to_idx.at("noise_stdv")](i, j) = 0;
                         if (i == j)
-                            dK[opt_params_to_idx.at("noise_stdv")](i, j) += 2 * hyperparams[opt_params_to_idx.at("noise_stdv")];
+                            dK[opt_params_to_idx.at("noise_stdv")](i, j) += 2 * hyperparams.at(opt_params_to_idx.at("noise_stdv"));
                         else
                             dK[opt_params_to_idx.at("noise_stdv")](j, i) = 0;
                     }
