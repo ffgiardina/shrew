@@ -66,7 +66,7 @@ namespace gaussian_process {
                 conditional_indices = std::unordered_set<int> {};
             };
             Matern(std::shared_ptr<Hyperparameters> hyperparameters_, std::shared_ptr<Hyperparameters> hp_lower_bounds_, 
-                std::shared_ptr<Hyperparameters> hp_upper_bounds_, std::vector<int> conditional_indices_) : hyperparameters(*shrew::utils::cast_pointer<MaternHyperparams>(hyperparameters_)),
+                std::shared_ptr<Hyperparameters> hp_upper_bounds_, Eigen::VectorXi conditional_indices_) : hyperparameters(*shrew::utils::cast_pointer<MaternHyperparams>(hyperparameters_)),
                 hp_lower_bounds(*shrew::utils::cast_pointer<MaternHyperparams>(hp_lower_bounds_)),
                 hp_upper_bounds(*shrew::utils::cast_pointer<MaternHyperparams>(hp_upper_bounds_)) {
                 conditional_indices.insert(conditional_indices_.begin(), conditional_indices_.end());      

@@ -31,8 +31,8 @@ namespace shrew
       Eigen::MatrixXd K_inv;
     };
 
-    MultivariateNormal getMarginal(MultivariateNormal random_vector, std::vector<int> marginal_indices);
-    MultivariateNormal getConditional(MultivariateNormal random_vector, std::vector<int> conditional_indices, char _operator, Eigen::MatrixXd value);
+    MultivariateNormal getMarginal(MultivariateNormal random_vector, Eigen::VectorXi marginal_indices);
+    MultivariateNormal getConditional(MultivariateNormal random_vector, Eigen::VectorXi conditional_indices, char _operator, Eigen::MatrixXd value);
     MultivariateNormal getConditional(MultivariateNormal random_vector, std::tuple<int, int> conditional_index_range, char _operator, Eigen::VectorXd value);
   } // namespace random_variable
 } // namespace shrew
