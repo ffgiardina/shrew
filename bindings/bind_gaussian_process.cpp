@@ -36,7 +36,7 @@ void bind_gaussian_process(py::module_ &m) {
         .def_readwrite("kernel", &GaussianProcess::kernel)
         .def_readwrite("hp_opt_meta", &GaussianProcess::hp_opt_meta);
 
-    py::class_<Kernel>(m, "Kernel");
+    py::class_<Kernel, std::shared_ptr<Kernel>>(m, "Kernel");
 
     py::class_<Hyperparameters, std::shared_ptr<Hyperparameters>>(m, "Hyperparameters");
 
@@ -59,18 +59,7 @@ void bind_gaussian_process(py::module_ &m) {
         py::arg("signal_stdv"), py::arg("lengthscale"), py::arg("noise_stdv"), py::arg("nu"), py::arg("override_noise_stdv"))
         .def_readwrite("override_noise_stdv", &MaternExtendedHyperparams::override_noise_stdv);
 
-    py::class_<MaternExtended, Kernel>(m, "MaternExtended")
-        .def(py::init<std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, Eigen::VectorXi, Eigen::VectorXi>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"), py::arg("override_conditional_indices"))
-        .def("get_hyperparameters", &MaternExtended::GetHyperparameters)
-        .def("get_hp_lower_bounds", &MaternExtended::GetHpLowerBounds)
-        .def("get_hp_upper_bounds", &MaternExtended::GetHpUpperBounds)
-        .def("set_hyperparameters", &MaternExtended::SetHyperparameters)
-        .def("set_hp_lower_bounds", &MaternExtended::SetHpLowerBounds)
-        .def("set_hp_upper_bounds", &MaternExtended::SetHpUpperBounds)
-        .def("get_conditional_indices", &MaternExtended::GetConditionalIndices)
-        .def("set_conditional_indices", &MaternExtended::SetConditionalIndices);
-
-    py::class_<Matern, Kernel>(m, "Matern")
+    py::class_<Matern, Kernel, std::shared_ptr<Matern>>(m, "Matern")
         .def(py::init<std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, Eigen::VectorXi>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"))
         .def("get_hyperparameters", &Matern::GetHyperparameters)
         .def("get_hp_lower_bounds", &Matern::GetHpLowerBounds)
@@ -80,7 +69,7 @@ void bind_gaussian_process(py::module_ &m) {
         .def("set_hp_upper_bounds", &Matern::SetHpUpperBounds)
         .def("get_conditional_indices", &Matern::GetConditionalIndices);
 
-    py::class_<SquaredExponential, Kernel>(m, "SquaredExponential")
+    py::class_<SquaredExponential, Kernel, std::shared_ptr<SquaredExponential>>(m, "SquaredExponential")
         .def(py::init<std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, Eigen::VectorXi>(), py::arg("hyperparameters"), py::arg("lower_bounds"), py::arg("upper_bounds"), py::arg("conditional_indices"))
         .def("get_hyperparameters", &SquaredExponential::GetHyperparameters)
         .def("get_hp_lower_bounds", &SquaredExponential::GetHpLowerBounds)
@@ -90,6 +79,22 @@ void bind_gaussian_process(py::module_ &m) {
         .def("set_hp_upper_bounds", &SquaredExponential::SetHpUpperBounds)
         .def("get_conditional_indices", &SquaredExponential::GetConditionalIndices)
         .def("set_conditional_indices", &SquaredExponential::SetConditionalIndices);
+
+    py::class_<MaternExtended, Matern, std::shared_ptr<MaternExtended>>(m, "MaternExtended")
+        .def(py::init<std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, std::shared_ptr<Hyperparameters>, Eigen::VectorXi, Eigen::VectorXi>(),
+            py::arg("hyperparameters"),
+            py::arg("lower_bounds"),
+            py::arg("upper_bounds"),
+            py::arg("conditional_indices"),
+            py::arg("override_conditional_indices"))    
+        .def("get_hyperparameters", &MaternExtended::GetHyperparameters)
+        .def("get_hp_lower_bounds", &MaternExtended::GetHpLowerBounds)
+        .def("get_hp_upper_bounds", &MaternExtended::GetHpUpperBounds)
+        .def("set_hyperparameters", &MaternExtended::SetHyperparameters)
+        .def("set_hp_lower_bounds", &MaternExtended::SetHpLowerBounds)
+        .def("set_hp_upper_bounds", &MaternExtended::SetHpUpperBounds)
+        .def("get_conditional_indices", &MaternExtended::GetConditionalIndices)
+        .def("set_conditional_indices", &MaternExtended::SetConditionalIndices);
 
     py::enum_<MaternSmoothness>(m, "MaternSmoothness")
         .value("NU_0_5", MaternSmoothness::NU_0_5)

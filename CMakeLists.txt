@@ -70,7 +70,7 @@ endif()
 
 if (SHREW_PYTHON)
     message(STATUS "Building Python bindings")
-    find_package(pybind11 REQUIRED)
+    find_package(pybind11 CONFIG REQUIRED)
     if (SHREW_GP)
         pybind11_add_module(pyshrew
             bindings/pyshrew_bind.cpp
