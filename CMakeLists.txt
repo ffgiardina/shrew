@@ -14,7 +14,18 @@ find_package(Eigen3 3.4 REQUIRED)
 find_package(Boost REQUIRED)
 
 if (SHREW_GP)
-    find_package(NLopt REQUIRED)
+    find_package(NLopt QUIET)
+    if(NOT TARGET NLopt::nlopt)
+        # NLopt CMake config not available (e.g. Ubuntu ships only pkg-config).
+        # Create the imported target from pkg-config metadata.
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(NLOPT REQUIRED nlopt)
+        add_library(NLopt::nlopt IMPORTED UNKNOWN GLOBAL)
+        set_target_properties(NLopt::nlopt PROPERTIES
+            IMPORTED_LOCATION             "${NLOPT_LINK_LIBRARIES}"
+            INTERFACE_INCLUDE_DIRECTORIES "${NLOPT_INCLUDE_DIRS}"
+            INTERFACE_LINK_DIRECTORIES    "${NLOPT_LIBRARY_DIRS}")
+    endif()
 endif()
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
