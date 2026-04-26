@@ -31,15 +31,31 @@ find_package(Boost REQUIRED)
 if (SHREW_GP)
     find_package(NLopt QUIET)
     if(NOT TARGET NLopt::nlopt)
-        # NLopt CMake config not available (e.g. Ubuntu ships only pkg-config).
-        # Create the imported target from pkg-config metadata.
-        find_package(PkgConfig REQUIRED)
-        pkg_check_modules(NLOPT REQUIRED nlopt)
-        add_library(NLopt::nlopt IMPORTED UNKNOWN GLOBAL)
-        set_target_properties(NLopt::nlopt PROPERTIES
-            IMPORTED_LOCATION             "${NLOPT_LINK_LIBRARIES}"
-            INTERFACE_INCLUDE_DIRECTORIES "${NLOPT_INCLUDE_DIRS}"
-            INTERFACE_LINK_DIRECTORIES    "${NLOPT_LIBRARY_DIRS}")
+        find_package(PkgConfig QUIET)
+        if(PKG_CONFIG_FOUND)
+            pkg_check_modules(NLOPT QUIET nlopt)
+            if(NLOPT_FOUND)
+                add_library(NLopt::nlopt IMPORTED UNKNOWN GLOBAL)
+                set_target_properties(NLopt::nlopt PROPERTIES
+                    IMPORTED_LOCATION             "${NLOPT_LINK_LIBRARIES}"
+                    INTERFACE_INCLUDE_DIRECTORIES "${NLOPT_INCLUDE_DIRS}"
+                    INTERFACE_LINK_DIRECTORIES    "${NLOPT_LIBRARY_DIRS}")
+            endif()
+        endif()
+    endif()
+    if(NOT TARGET NLopt::nlopt)
+        FetchContent_Declare(
+            nlopt_src
+            URL https://github.com/stevengj/nlopt/archive/refs/tags/v2.10.1.tar.gz
+            DOWNLOAD_EXTRACT_TIMESTAMP OFF
+        )
+        set(NLOPT_PYTHON OFF CACHE BOOL "" FORCE)
+        set(NLOPT_MATLAB OFF CACHE BOOL "" FORCE)
+        set(NLOPT_GUILE OFF CACHE BOOL "" FORCE)
+        set(NLOPT_SWIG OFF CACHE BOOL "" FORCE)
+        set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+        FetchContent_MakeAvailable(nlopt_src)
+        add_library(NLopt::nlopt ALIAS nlopt)
     endif()
 endif()
 

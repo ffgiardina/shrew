@@ -29,26 +29,8 @@ test-command = 'python -c "import pyshrew; print(dir(pyshrew))"'
 archs = ["x86_64", "aarch64"]
 manylinux-x86_64-image = "manylinux_2_28"
 manylinux-aarch64-image = "manylinux_2_28"
-before-all = """
-  dnf install -y boost-devel &&
-  curl -fsSL https://github.com/stevengj/nlopt/archive/refs/tags/v2.10.1.tar.gz -o /tmp/nlopt.tar.gz &&
-  tar xzf /tmp/nlopt.tar.gz -C /tmp &&
-  cmake -S /tmp/nlopt-2.10.1 -B /tmp/nlopt-build -DCMAKE_BUILD_TYPE=Release -DNLOPT_PYTHON=OFF -DNLOPT_MATLAB=OFF -DNLOPT_GUILE=OFF -DNLOPT_SWIG=OFF -DCMAKE_INSTALL_PREFIX=/usr &&
-  cmake --build /tmp/nlopt-build -j$(nproc) &&
-  cmake --install /tmp/nlopt-build
-"""
+before-all = "dnf install -y boost-devel"
 
 [tool.cibuildwheel.macos]
-before-all = """
-  brew install boost &&
-  curl -fsSL https://github.com/stevengj/nlopt/archive/refs/tags/v2.10.1.tar.gz -o /tmp/nlopt.tar.gz &&
-  tar xzf /tmp/nlopt.tar.gz -C /tmp &&
-  cmake -S /tmp/nlopt-2.10.1 -B /tmp/nlopt-build \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DNLOPT_PYTHON=OFF -DNLOPT_MATLAB=OFF -DNLOPT_GUILE=OFF -DNLOPT_SWIG=OFF \
-    -DCMAKE_INSTALL_PREFIX=/usr/local \
-    -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0 &&
-  cmake --build /tmp/nlopt-build -j$(sysctl -n hw.logicalcpu) &&
-  cmake --install /tmp/nlopt-build
-"""
+before-all = "brew install boost"
 environment = {MACOSX_DEPLOYMENT_TARGET = "13.0"}
