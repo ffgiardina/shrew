@@ -26,7 +26,7 @@ skip = ["*-win32", "*-musllinux*"]
 test-command = 'python -c "import pyshrew; print(dir(pyshrew))"'
 
 [tool.cibuildwheel.linux]
-archs = ["x86_64", "aarch64"]
+archs = ["x86_64"]
 manylinux-x86_64-image = "manylinux_2_28"
 manylinux-aarch64-image = "manylinux_2_28"
 before-all = "dnf install -y boost-devel"
