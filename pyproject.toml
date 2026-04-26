@@ -1,0 +1,54 @@
+[build-system]
+requires = ["scikit-build-core>=0.9", "pybind11>=2.12"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "pyshrew"
+version = "0.1.0"
+description = "Python bindings for shrew — random variable arithmetic"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/ffgiardina/shrew"
+
+[tool.scikit-build]
+cmake.build-type = "Release"
+cmake.args = ["-DSHREW_PYTHON=ON", "-DSHREW_GP=ON", "-DSHREW_TESTS=OFF"]
+# __init__.py and .so are both installed by CMake; no auto Python source scanning needed
+wheel.packages = []
+
+[tool.cibuildwheel]
+build = ["cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*"]
+skip = ["*-win32", "*-musllinux*"]
+test-command = 'python -c "import pyshrew; print(dir(pyshrew))"'
+
+[tool.cibuildwheel.linux]
+archs = ["x86_64", "aarch64"]
+manylinux-x86_64-image = "manylinux_2_28"
+manylinux-aarch64-image = "manylinux_2_28"
+before-all = """
+  dnf install -y boost-devel &&
+  curl -fsSL https://github.com/stevengj/nlopt/archive/refs/tags/v2.10.1.tar.gz -o /tmp/nlopt.tar.gz &&
+  tar xzf /tmp/nlopt.tar.gz -C /tmp &&
+  cmake -S /tmp/nlopt-2.10.1 -B /tmp/nlopt-build -DCMAKE_BUILD_TYPE=Release -DNLOPT_PYTHON=OFF -DNLOPT_MATLAB=OFF -DNLOPT_GUILE=OFF -DNLOPT_SWIG=OFF -DCMAKE_INSTALL_PREFIX=/usr &&
+  cmake --build /tmp/nlopt-build -j$(nproc) &&
+  cmake --install /tmp/nlopt-build
+"""
+
+[tool.cibuildwheel.macos]
+before-all = """
+  brew install boost &&
+  curl -fsSL https://github.com/stevengj/nlopt/archive/refs/tags/v2.10.1.tar.gz -o /tmp/nlopt.tar.gz &&
+  tar xzf /tmp/nlopt.tar.gz -C /tmp &&
+  cmake -S /tmp/nlopt-2.10.1 -B /tmp/nlopt-build \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DNLOPT_PYTHON=OFF -DNLOPT_MATLAB=OFF -DNLOPT_GUILE=OFF -DNLOPT_SWIG=OFF \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
+    -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0 &&
+  cmake --build /tmp/nlopt-build -j$(sysctl -n hw.logicalcpu) &&
+  cmake --install /tmp/nlopt-build
+"""
+environment = {MACOSX_DEPLOYMENT_TARGET = "13.0"}

@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.25.0)
-cmake_policy(SET CMP0148 OLD) # Make sure provided python executable is used
+if(NOT DEFINED SKBUILD)
+  cmake_policy(SET CMP0148 OLD) # Legacy Python discovery for non-scikit-build builds
+endif()
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 project(shrew)
 
@@ -10,7 +12,20 @@ option (SHREW_PYTHON "build python bindings" ON)
 option (SHREW_GP "build gaussian process subpackage" ON)
 option (SHREW_TESTS "build gtests" ON)
 
-find_package(Eigen3 3.4 REQUIRED)
+include(FetchContent)
+
+find_package(Eigen3 3.4 QUIET)
+if(NOT TARGET Eigen3::Eigen)
+  FetchContent_Declare(
+    Eigen3
+    URL https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
+    URL_HASH SHA256=8586084f71f9bde545ee7fa6d00288b264a2b7ac3607b974e54d13e7162c1c72
+    DOWNLOAD_EXTRACT_TIMESTAMP OFF
+  )
+  set(EIGEN_BUILD_DOC OFF CACHE BOOL "" FORCE)
+  set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
+  FetchContent_MakeAvailable(Eigen3)
+endif()
 find_package(Boost REQUIRED)
 
 if (SHREW_GP)
@@ -136,18 +151,20 @@ install(FILES
     DESTINATION cmake
 )
 
-# Python pip-compatible structure installation
 if (SHREW_PYTHON)
+  if(DEFINED SKBUILD)
+    # scikit-build-core: install extension + __init__.py to pyshrew/
+    # (maps to site-packages/pyshrew/ in the final wheel)
+    install(TARGETS pyshrew LIBRARY DESTINATION pyshrew)
+    install(FILES bindings/__init__.py DESTINATION pyshrew)
+  else()
+    # Legacy direct-cmake install
     message(STATUS "Installing Python bindings")
     install(TARGETS pyshrew
-        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew/pyshrew
+      LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew/pyshrew
     )
-    # Install __init__.py so pip sees it as a package
     install(FILES bindings/__init__.py
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew/pyshrew
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew/pyshrew
     )
-
-    install(FILES bindings/setup.py
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/pyshrew
-    )
+  endif()
 endif()
