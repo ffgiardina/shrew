@@ -1,0 +1,56 @@
+name: release-cpp
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build-and-release:
+    name: Build C++ release on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: shrew-linux-x86_64
+          - os: macos-latest
+            artifact_name: shrew-macos-arm64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libboost-dev libeigen3-dev libnlopt-cxx-dev
+
+      - name: Install dependencies (macOS)
+        if: matrix.os == 'macos-latest'
+        run: brew install boost eigen nlopt
+
+      - name: Configure
+        run: >
+          cmake -B build
+          -DCMAKE_BUILD_TYPE=Release
+          -DSHREW_PYTHON=OFF
+          -DSHREW_TESTS=OFF
+          -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Install
+        run: cmake --install build
+
+      - name: Package
+        run: >
+          tar -czf ${{ matrix.artifact_name }}.tar.gz
+          -C ${{ github.workspace }}/install .
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.artifact_name }}.tar.gz
+          generate_release_notes: true
