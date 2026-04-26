@@ -2,12 +2,7 @@
 
 ## What a release produces
 
-Pushing a `v*` tag triggers two independent workflows:
-
-| Workflow | Output |
-|---|---|
-| `build-wheels.yml` | Python wheels on PyPI (`pip install pyshrew`) |
-| `release-cpp.yml` | Static lib + header tarballs on GitHub Releases (C++ consumers) |
+Pushing a `v*` tag triggers `build-wheels.yml`, which builds Python wheels for Linux x86_64 and macOS arm64 and publishes them to PyPI (`pip install pyshrew`).
 
 ---
 

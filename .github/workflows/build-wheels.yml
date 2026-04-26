@@ -14,9 +14,7 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-          - os: macos-13        # x86_64 Intel runner
-            cibw_archs: "x86_64"
-          - os: macos-latest    # arm64 Apple Silicon runner
+          - os: macos-latest
             cibw_archs: "arm64"
 
     steps:
